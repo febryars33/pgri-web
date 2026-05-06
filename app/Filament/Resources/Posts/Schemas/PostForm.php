@@ -3,11 +3,13 @@
 namespace App\Filament\Resources\Posts\Schemas;
 
 use App\Enums\PostStatus;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class PostForm
@@ -36,6 +38,31 @@ class PostForm
                     ->default('draft')
                     ->required(),
                 SpatieTagsInput::make('tags'),
+                // Section::make('File pendukung')
+                //     ->columnSpanFull()
+                //     ->description('Pilih file pendukung untuk postingan ini.')
+                //     ->schema([
+
+                //         ]),
+                Section::make('attachments')
+                    ->columnSpanFull()
+                    ->label('File Pendukung')
+                    ->description('Pilih file pendukung untuk postingan ini.')
+                    ->schema([
+                        Repeater::make('attachments')
+                            ->relationship('post_attachments')
+                            ->label('File lampiran')
+                            ->schema([
+                                TextInput::make('name')
+                                    ->required(),
+                                SpatieMediaLibraryFileUpload::make('files')
+                                    ->collection('post_attachments')
+                                    ->reorderable()
+                                    ->downloadable()
+                                    ->deletable()
+                            ])
+                            ->columns(2)
+                    ])
             ]);
     }
 }

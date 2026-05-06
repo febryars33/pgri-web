@@ -30,7 +30,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $post->load(['post_category', 'tags']);
+        $post->load(['post_category', 'tags', 'post_attachments']);
 
         return inertia('posts/show', [
             'post' => new PostResource($post),

@@ -9,10 +9,12 @@ import {
     Avatar,
     GridItem,
     Separator,
-    IconButton,
     Grid,
+    Icon,
+    Alert,
 } from '@chakra-ui/react';
 import { Head, Link } from '@inertiajs/react';
+import type { FileMimeType } from '@zag-js/file-utils';
 import {
     LuCalendar,
     LuDownload,
@@ -23,6 +25,7 @@ import {
     LuFileText,
     LuTag,
 } from 'react-icons/lu';
+import { toaster } from '@/components/ui/toaster';
 import Layout from '@/layouts/post';
 import posts from '@/routes/posts';
 import type { Post } from '@/types/models/post';
@@ -34,32 +37,103 @@ interface Props {
 }
 
 export default function Show({ post }: Props) {
-    // DATA HARDCODE (DUMMY)
-    const attachments = [
-        { name: 'Panduan Pendaftaran PPDB.pdf', size: '2.4 MB', ext: 'pdf' },
-        { name: 'Jadwal_Ujian_Akhir_2024.xlsx', size: '1.1 MB', ext: 'xlsx' },
-        { name: 'Surat_Pernyataan_Siswa.docx', size: '450 KB', ext: 'docx' },
-        { name: 'catatan_tambahan.txt', size: '12 KB', ext: 'txt' },
-    ];
-
     const getFileData = (ext: string) => {
         switch (ext) {
             case 'pdf':
-                return { color: 'red.500', icon: LuFileText, label: 'PDF' };
+                return {
+                    baseColor: 'red',
+                    color: 'red.500',
+                    icon: LuFileText,
+                    label: 'PDF',
+                };
             case 'xlsx':
             case 'csv':
                 return {
+                    baseColor: 'green',
                     color: 'green.500',
                     icon: LuFileSpreadsheet,
                     label: 'Excel',
                 };
             case 'docx':
             case 'doc':
-                return { color: 'blue.500', icon: LuFileText, label: 'Word' };
+                return {
+                    baseColor: 'blue',
+                    color: 'blue.500',
+                    icon: LuFileText,
+                    label: 'Word',
+                };
             case 'txt':
-                return { color: 'gray.500', icon: LuFile, label: 'Text' };
+                return {
+                    baseColor: 'gray',
+                    color: 'gray.500',
+                    icon: LuFile,
+                    label: 'Text',
+                };
             default:
-                return { color: 'teal.500', icon: LuFileCode, label: 'File' };
+                return {
+                    baseColor: 'teal',
+                    color: 'teal.500',
+                    icon: LuFileCode,
+                    label: 'File',
+                };
+        }
+    };
+
+    /**
+     * Helper untuk mengunduh file secara asinkron
+     */
+    const handleFileDownload = async (
+        url: string | undefined,
+        fileName: string,
+        mimeType?: FileMimeType,
+    ) => {
+        // 1. Validasi awal
+        if (!url) {
+            toaster.create({ title: 'URL tidak ditemukan', type: 'error' });
+
+            return;
+        }
+
+        try {
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error('Gagal mengunduh file dari server');
+            }
+
+            const blob = await response.blob();
+
+            // 2. Gunakan MimeType jika disediakan untuk memastikan konsistensi file
+            const fileBlob = mimeType
+                ? new Blob([blob], { type: mimeType })
+                : blob;
+
+            const objectUrl = window.URL.createObjectURL(fileBlob);
+
+            // 3. Trigger Download
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+
+            // 4. Cleanup
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(objectUrl);
+
+            toaster.create({
+                title: 'Berhasil',
+                description: `${fileName} berhasil diunduh`,
+                type: 'success',
+            });
+        } catch (error) {
+            const message =
+                error instanceof Error ? error.message : 'Terjadi kesalahan';
+            toaster.create({
+                title: 'Unduhan Gagal',
+                description: message,
+                type: 'error',
+            });
         }
     };
 
@@ -271,144 +345,199 @@ export default function Show({ post }: Props) {
                     />
 
                     {/* Attachment Section */}
-                    <Box mt={16} p={1} borderRadius="3xl" bg="bg.muted">
-                        {/* Header tetap sama */}
-                        <HStack p={6} pb={4}>
-                            <HStack gap={3}>
-                                <Box
-                                    p={2}
-                                    bg="teal.500/10"
-                                    borderRadius="lg"
-                                    color="teal.500"
-                                >
-                                    <LuFileDown size={22} />
-                                </Box>
-                                <VStack align="start" gap={0}>
-                                    <Heading size="md" fontWeight="bold">
-                                        Unduh Berkas
-                                    </Heading>
-                                    <Text fontSize="xs" color="fg.muted">
-                                        Tersedia {attachments.length} file
-                                        pendukung
-                                    </Text>
-                                </VStack>
-                            </HStack>
-                        </HStack>
-
-                        {/* PERBAIKAN GRID: Responsif & Padding */}
-                        <Grid
-                            templateColumns={{
-                                base: '1fr',
-                                md: 'repeat(2, 1fr)',
-                            }} // 1 kolom di mobile, 2 di desktop
-                            gap={4} // Gap diperkecil sedikit agar tidak terlalu renggang
-                            px={6} // Padding horizontal disamakan dengan header
-                            pb={6} // Padding bawah box
-                        >
-                            {attachments.map((file, index) => {
-                                const { color, icon: FileTypeIcon } =
-                                    getFileData(file.ext);
-
-                                return (
-                                    <GridItem key={index}>
-                                        <Link
-                                            href={`/download/${file.name}`}
-                                            style={{ textDecoration: 'none' }}
-                                            role="group"
+                    {post.data.media.attachments &&
+                        post.data.media.attachments.length > 0 && (
+                            <Box mt={16} p={1} borderRadius="3xl" bg="bg.muted">
+                                {/* Header tetap sama */}
+                                <HStack p={6} pb={4}>
+                                    <HStack gap={3}>
+                                        <Box
+                                            p={2}
+                                            bg="teal.500/10"
+                                            borderRadius="lg"
+                                            color="teal.500"
                                         >
-                                            <HStack
-                                                p={4}
-                                                borderRadius="2xl"
-                                                // Menggunakan variabel color dari helper getFileData
-                                                bg={`${color}/10`}
-                                                _dark={{
-                                                    bg: `${color}/20`, // Sedikit lebih pekat di mode gelap agar kontras
-                                                }}
-                                                transition="all 0.3s cubic-bezier(.4,0,.2,1)"
-                                                _hover={{
-                                                    transform:
-                                                        'translateY(-4px)',
-                                                    bg: `${color}/20`, // Berubah saat hover sesuai jenis file
-                                                    _dark: {
-                                                        bg: `${color}/30`,
-                                                    },
-                                                }}
-                                                justify="space-between"
+                                            <LuFileDown size={22} />
+                                        </Box>
+                                        <VStack align="start" gap={0}>
+                                            <Heading
+                                                size="md"
+                                                fontWeight="bold"
                                             >
-                                                <HStack
-                                                    gap={4}
-                                                    overflow="hidden"
-                                                >
-                                                    <Box
-                                                        p={3}
-                                                        borderRadius="xl"
+                                                Unduh Berkas
+                                            </Heading>
+                                            <Text
+                                                fontSize="xs"
+                                                color="fg.muted"
+                                            >
+                                                Tersedia{' '}
+                                                {
+                                                    post.data.media.attachments
+                                                        ?.length
+                                                }{' '}
+                                                file pendukung
+                                            </Text>
+                                        </VStack>
+                                    </HStack>
+                                </HStack>
+
+                                {/* PERBAIKAN GRID: Responsif & Padding */}
+                                <Grid
+                                    templateColumns={{
+                                        base: '1fr',
+                                        md: 'repeat(2, 1fr)',
+                                    }} // 1 kolom di mobile, 2 di desktop
+                                    gap={4} // Gap diperkecil sedikit agar tidak terlalu renggang
+                                    px={6} // Padding horizontal disamakan dengan header
+                                    pb={6} // Padding bawah box
+                                >
+                                    {/* <GridItem colSpan={2}>
+                                        <HStack>
+                                            <Alert.Root status="error">
+                                                <Alert.Indicator />
+                                                <Alert.Content>
+                                                    <Alert.Title>
+                                                        Invalid Fields
+                                                    </Alert.Title>
+                                                    <Alert.Description>
+                                                        Your form has some
+                                                        errors. Please fix them
+                                                        and try again.
+                                                    </Alert.Description>
+                                                </Alert.Content>
+                                            </Alert.Root>
+                                        </HStack>
+                                    </GridItem> */}
+                                    {post.data.media.attachments
+                                        .filter(
+                                            (attachment) => !!attachment.file,
+                                        )
+                                        .map((file, index) => {
+                                            const fileData = file.file!;
+                                            const {
+                                                color,
+                                                icon: FileTypeIcon,
+                                                baseColor,
+                                            } = getFileData(
+                                                file.file?.extension ?? '',
+                                            );
+
+                                            return (
+                                                <GridItem key={index}>
+                                                    <HStack
+                                                        className="group"
+                                                        cursor="pointer"
+                                                        p={4}
+                                                        borderRadius="2xl"
                                                         bg={`${color}/10`}
-                                                        color={color}
-                                                        transition="transform 0.3s"
-                                                        _groupHover={{
-                                                            transform:
-                                                                'scale(1.1)',
+                                                        _dark={{
+                                                            bg: `${color}/20`,
                                                         }}
+                                                        transition="all 0.3s cubic-bezier(.4,0,.2,1)"
+                                                        _hover={{
+                                                            transform:
+                                                                'translateY(-4px)',
+                                                            bg: `${color}/20`,
+                                                            _dark: {
+                                                                bg: `${color}/30`,
+                                                            },
+                                                        }}
+                                                        justify="space-between"
+                                                        onClick={() =>
+                                                            handleFileDownload(
+                                                                fileData.url,
+                                                                file.name,
+                                                                fileData.mime_type,
+                                                            )
+                                                        }
                                                     >
-                                                        <FileTypeIcon
-                                                            size={24}
-                                                        />
-                                                    </Box>
-
-                                                    <VStack
-                                                        align="start"
-                                                        gap={0}
-                                                        overflow="hidden"
-                                                    >
-                                                        <Text
-                                                            fontWeight="semibold"
-                                                            fontSize="sm"
-                                                            color="fg.default"
-                                                            _groupHover={{
-                                                                color: 'teal.400',
-                                                            }}
-                                                            transition="color 0.2s"
-                                                            truncate
-                                                            maxW="180px"
-                                                        >
-                                                            {file.name}
-                                                        </Text>
                                                         <HStack
-                                                            fontSize="xs"
-                                                            color="fg.subtle"
-                                                            gap={2}
+                                                            gap={4}
+                                                            overflow="hidden"
                                                         >
-                                                            <Text>
-                                                                {file.ext.toUpperCase()}
-                                                            </Text>
-                                                            <Text>•</Text>
-                                                            <Text>
-                                                                {file.size}
-                                                            </Text>
-                                                        </HStack>
-                                                    </VStack>
-                                                </HStack>
+                                                            <Box
+                                                                p={3}
+                                                                borderRadius="xl"
+                                                                bg={`${color}/10`}
+                                                                color={color}
+                                                                transition="transform 0.3s"
+                                                                _groupHover={{
+                                                                    transform:
+                                                                        'scale(1.1)',
+                                                                }}
+                                                            >
+                                                                <FileTypeIcon
+                                                                    size={24}
+                                                                />
+                                                            </Box>
 
-                                                <IconButton
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    aria-label="Download"
-                                                    color="fg.muted"
-                                                    flexShrink={0}
-                                                    _groupHover={{
-                                                        color: 'teal.400',
-                                                        bg: 'teal.500/10',
-                                                    }}
-                                                >
-                                                    <LuDownload size={18} />
-                                                </IconButton>
-                                            </HStack>
-                                        </Link>
-                                    </GridItem>
-                                );
-                            })}
-                        </Grid>
-                    </Box>
+                                                            <VStack
+                                                                align="start"
+                                                                gap={0}
+                                                                overflow="hidden"
+                                                            >
+                                                                <Text
+                                                                    fontWeight="semibold"
+                                                                    fontSize="sm"
+                                                                    color="fg.default"
+                                                                    _groupHover={{
+                                                                        color:
+                                                                            baseColor +
+                                                                            '.600',
+                                                                        _dark: {
+                                                                            color:
+                                                                                baseColor +
+                                                                                '.400',
+                                                                        },
+                                                                    }}
+                                                                    transition="color 0.2s"
+                                                                    truncate
+                                                                    maxW="280px"
+                                                                >
+                                                                    {file.name}
+                                                                </Text>
+                                                                <HStack
+                                                                    fontSize="xs"
+                                                                    color="fg.subtle"
+                                                                    gap={2}
+                                                                >
+                                                                    <Text>
+                                                                        {fileData.extension.toUpperCase()}
+                                                                    </Text>
+                                                                    <Text>
+                                                                        •
+                                                                    </Text>
+                                                                    <Text>
+                                                                        {
+                                                                            fileData.size
+                                                                        }
+                                                                    </Text>
+                                                                </HStack>
+                                                            </VStack>
+                                                        </HStack>
+
+                                                        <Icon
+                                                            as={LuDownload}
+                                                            color="fg.muted"
+                                                            boxSize={6}
+                                                            _groupHover={{
+                                                                color:
+                                                                    baseColor +
+                                                                    '.600',
+                                                                _dark: {
+                                                                    color:
+                                                                        baseColor +
+                                                                        '.400',
+                                                                },
+                                                            }}
+                                                        />
+                                                    </HStack>
+                                                </GridItem>
+                                            );
+                                        })}
+                                </Grid>
+                            </Box>
+                        )}
 
                     <Separator my={8} />
 

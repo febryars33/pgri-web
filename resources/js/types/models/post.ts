@@ -1,4 +1,5 @@
 import type { PostStatus } from "../enums/post-status";
+import type { PostAttachment } from "./post-attachment";
 import type { PostCategory } from "./post-category";
 import type { Tag } from "./tag";
 
@@ -16,6 +17,7 @@ export interface Post {
             preview?: string;
             original?: string;
         };
+        attachments?: PostAttachment[]
     };
 
     // Sesuai grup 'dates' di Resource

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Spatie\Image\Enums\Fit;
@@ -94,6 +95,16 @@ class Post extends Model implements HasMedia
         return $this->belongsTo(PostCategory::class);
     }
 
+    /**
+     * Get all of the post_attachments for the Post
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function post_attachments(): HasMany
+    {
+        return $this->hasMany(PostAttachment::class);
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';
@@ -105,5 +116,10 @@ class Post extends Model implements HasMedia
             ->addMediaConversion('preview')
             ->fit(Fit::Contain, 300, 300)
             ->nonQueued();
+    }
+
+    public function attachments()
+    {
+        return $this->media()->where('collection_name', 'attachments');
     }
 }
