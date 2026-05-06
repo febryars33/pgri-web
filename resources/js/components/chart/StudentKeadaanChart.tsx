@@ -367,7 +367,7 @@ const MONTHLY_SUMMARY: MonthlySummary[] = [
 
 /** Data dummy lengkap — siap pakai, tidak perlu fetch */
 const DUMMY_DATA: StudentData = {
-    tahunAjaran: '2024/2025',
+    tahunAjaran: '2025/2026',
     classes: buildClassData(),
     summary: MONTHLY_SUMMARY,
 };

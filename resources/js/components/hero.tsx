@@ -108,7 +108,7 @@ export default function Hero() {
                             borderRadius="full"
                             bg="yellow.500"
                         />
-                        Penerimaan Peserta Didik Baru 2024/2025
+                        Penerimaan Peserta Didik Baru 2025/2026
                     </Badge>
 
                     {/* Main heading */}

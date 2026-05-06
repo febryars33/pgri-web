@@ -36,7 +36,7 @@ export default function SPMB() {
                     }}
                     letterSpacing="tight"
                 >
-                    SPMB 2024/2025
+                    SPMB 2025/2026
                 </Heading>
 
                 <Text
