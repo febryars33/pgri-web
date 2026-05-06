@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\PostStatus;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
-use Spatie\Tags\Tag;
+use App\Models\Tag;
 
 class PostController extends Controller
 {
@@ -21,7 +21,7 @@ class PostController extends Controller
 
         return inertia('posts/index', [
             'posts' => PostResource::collection($posts),
-            'tags' => Tag::latest()->limit(10)->get(),
+            'tags' => $this->tags(),
         ]);
     }
 
@@ -34,7 +34,7 @@ class PostController extends Controller
 
         return inertia('posts/show', [
             'post' => new PostResource($post),
-            'tags' => Tag::latest()->limit(10)->get(),
+            'tags' => $this->tags(),
         ]);
     }
 
@@ -48,7 +48,15 @@ class PostController extends Controller
 
         return inertia('posts/index', [
             'posts' => PostResource::collection($posts),
-            'tags' => Tag::latest()->limit(10)->get(),
+            'tags' => $this->tags(),
         ]);
+    }
+
+    protected function tags()
+    {
+        return Tag::withCount('posts')
+            ->orderBy('posts_count', 'desc')
+            ->limit(10)
+            ->get();
     }
 }

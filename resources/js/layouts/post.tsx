@@ -31,19 +31,32 @@ const CATEGORIES = [
 const SidebarSection = ({
     title,
     children,
+    icon: Icon, // Kita tambahkan prop icon opsional
 }: {
-    title: string;
+    title: React.ReactNode; // Ubah dari string ke React.ReactNode
     children: React.ReactNode;
+    icon?: React.ElementType; // Tipe data untuk komponen icon
 }) => (
     <VStack align="stretch" gap={4} mb={8}>
-        <Heading
-            size="sm"
-            fontWeight="bold"
-            letterSpacing="wider"
-            textTransform="uppercase"
-        >
-            {title}
-        </Heading>
+        <HStack gap={2} align="center">
+            {/* Render icon jika ada */}
+            {Icon && (
+                <Icon
+                    size={18}
+                    style={{ color: 'var(--chakra-colors-teal-500)' }}
+                />
+            )}
+
+            <Heading
+                size="sm"
+                fontWeight="bold"
+                letterSpacing="wider"
+                textTransform="uppercase"
+            >
+                {title}
+            </Heading>
+        </HStack>
+
         <Separator borderBottomWidth="2px" borderColor="teal.500" w="40px" />
         <Box>{children}</Box>
     </VStack>
@@ -53,6 +66,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const { tags } = usePage<{
         tags: Tag[];
     }>().props;
+
+    const { url } = usePage();
 
     return (
         <Box minH="100vh" display="flex" flexDirection="column">
@@ -136,39 +151,90 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                     </SidebarSection>
 
                                     {/* Tags */}
-                                    <SidebarSection title="Tag Populer">
+                                    <SidebarSection
+                                        title="Tag Populer"
+                                        icon={LuTag}
+                                    >
                                         <HStack wrap="wrap" gap={2}>
-                                            {tags.map((tag) => (
-                                                <Link
-                                                    href={posts.tag(
-                                                        tag.slug.id,
-                                                    )}
-                                                    key={tag.id}
-                                                >
+                                            {tags.map((tag) => {
+                                                const href = posts.tag(
+                                                    tag.slug.id,
+                                                );
+
+                                                const active = url === href.url;
+
+                                                const TagContent = (
+                                                    <>
+                                                        {tag.name.id}
+
+                                                        <Text
+                                                            as="span"
+                                                            ml={1.5}
+                                                            fontWeight="bold"
+                                                            color={
+                                                                active
+                                                                    ? 'white'
+                                                                    : 'teal.600'
+                                                            }
+                                                            _dark={{
+                                                                color: active
+                                                                    ? 'white'
+                                                                    : 'teal.400',
+                                                            }}
+                                                        >
+                                                            {tag.posts_count}
+                                                        </Text>
+                                                    </>
+                                                );
+
+                                                return (
                                                     <Badge
-                                                        variant="subtle"
+                                                        // Gunakan colorPalette agar Chakra menangani variasi warna otomatis
+                                                        colorPalette={
+                                                            active
+                                                                ? 'teal'
+                                                                : 'gray'
+                                                        }
+                                                        // Variant solid untuk aktif, subtle untuk tidak aktif
+                                                        variant={
+                                                            active
+                                                                ? 'solid'
+                                                                : 'subtle'
+                                                        }
                                                         px={3}
                                                         py={1}
                                                         borderRadius="md"
                                                         _hover={{
-                                                            bg: 'teal.100',
+                                                            // Jika aktif, buat sedikit lebih terang/gelap saat hover
+                                                            // Jika tidak aktif, gunakan hover standar
+                                                            bg: active
+                                                                ? 'teal.600'
+                                                                : 'teal.100',
                                                             _dark: {
-                                                                bg: 'teal.900',
+                                                                bg: active
+                                                                    ? 'teal.600'
+                                                                    : 'teal.900',
                                                             },
                                                         }}
+                                                        // Pastikan key ada di elemen terluar (jika di dalam map)
+                                                        key={tag.id}
+                                                        asChild
                                                     >
-                                                        <LuTag
-                                                            style={{
-                                                                marginRight:
-                                                                    '4px',
-                                                                display:
-                                                                    'inline',
-                                                            }}
-                                                        />
-                                                        {tag.name.id}
+                                                        {active ? (
+                                                            <span>
+                                                                {TagContent}
+                                                            </span>
+                                                        ) : (
+                                                            <Link
+                                                                href={href}
+                                                                preserveScroll
+                                                            >
+                                                                {TagContent}
+                                                            </Link>
+                                                        )}
                                                     </Badge>
-                                                </Link>
-                                            ))}
+                                                );
+                                            })}
                                         </HStack>
                                     </SidebarSection>
 
