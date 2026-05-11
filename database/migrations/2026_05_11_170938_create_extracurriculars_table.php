@@ -24,6 +24,7 @@ return new class extends Migration
                 ->nullable();
             $table->json('mentors')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->timestamps();
         });
     }
 

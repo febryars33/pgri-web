@@ -12,7 +12,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-#[WithoutTimestamps]
 #[Fillable([
     'extracurricular_category_id',
     'name',
