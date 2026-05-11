@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PostStatus;
 use App\Observers\PostObserver;
+use App\Traits\SlugRoute;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -37,7 +38,7 @@ use Spatie\Tags\HasTags;
 #[ObservedBy(PostObserver::class)]
 class Post extends Model implements HasMedia
 {
-    use HasSlug, HasTags, InteractsWithMedia, SoftDeletes;
+    use HasSlug, HasTags, InteractsWithMedia, SlugRoute, SoftDeletes;
 
     protected $with = ['post_category'];
 
@@ -99,22 +100,24 @@ class Post extends Model implements HasMedia
      */
     public function post_category(): BelongsTo
     {
-        return $this->belongsTo(PostCategory::class);
+        return $this->belongsTo(PostCategory::class)
+            ->withDefault([
+                'id' => null,
+                'name' => 'Uncategorized',
+                'slug' => 'uncategorized',
+                'description' => null,
+                'deleted_at' => null,
+                'created_at' => null,
+                'updated_at' => null,
+            ]);
     }
 
     /**
      * Get all of the post_attachments for the Post
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function post_attachments(): HasMany
     {
         return $this->hasMany(PostAttachment::class);
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
     }
 
     public function registerMediaConversions(?Media $media = null): void

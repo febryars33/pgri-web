@@ -1,4 +1,5 @@
 import { Box, VStack } from '@chakra-ui/react';
+import extracurriculars from '@/routes/extracurriculars';
 import FooterNavLink from './footer-nav-link';
 import SectionHeading from './section-heading';
 
@@ -7,9 +8,9 @@ export default function Academic() {
         { label: 'Kurikulum Merdeka', href: '#' },
         { label: 'Jadwal Pelajaran', href: '#' },
         { label: 'Kalender Akademik', href: '#' },
-        { label: 'Ekstrakulikuler', href: '#' },
+        { label: 'Ekstrakulikuler', href: extracurriculars.index() },
         { label: 'Perpustakaan Digital', href: '#' },
-        { label: 'PPDB Online', href: '#' },
+        { label: 'SPMB Online', href: '#' },
     ];
 
     return (

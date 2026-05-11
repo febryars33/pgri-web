@@ -27,6 +27,6 @@ export interface Post {
     };
 
     // Relasi menggunakan interface yang sudah didefinisikan
-    category?: PostCategory | null;
+    category: PostCategory;
     tags?: Tag[];
 }

@@ -40,7 +40,7 @@ export default function Contact() {
             },
             button: {
                 palette: 'blue',
-                text: 'Hubungi Tim PPDB',
+                text: 'Hubungi Tim SPMB',
             },
             bg: 'blue.50',
             _dark: {

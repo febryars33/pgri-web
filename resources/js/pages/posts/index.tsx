@@ -14,9 +14,11 @@ import {
     Flex,
     Square,
     Icon,
+    EmptyState,
+    VStack,
 } from '@chakra-ui/react';
 import { Head, Link } from '@inertiajs/react';
-import { LuCalendar, LuImageOff, LuUser } from 'react-icons/lu';
+import { LuCalendar, LuImageOff, LuSearch, LuUser } from 'react-icons/lu';
 import Layout from '@/layouts/post';
 import posts from '@/routes/posts';
 import type { Post } from '@/types/models/post';
@@ -113,9 +115,15 @@ const PostCard = ({ post }: { post: Post }) => (
                     top={4}
                     left={4}
                     variant="subtle"
-                    colorPalette={post.category ? 'yellow' : 'red'}
+                    colorPalette={
+                        post.category.slug === 'uncategorized'
+                            ? 'red'
+                            : 'yellow'
+                    }
                 >
-                    {post.category ? post.category.name : 'Uncategorized'}
+                    {post.category.slug === 'uncategorized'
+                        ? 'Uncategorized'
+                        : post.category.name}
                 </Badge>
             </Box>
 
@@ -175,11 +183,32 @@ export default function Index({ posts, seo }: Props) {
 
             {/* Main Content (9 Columns) */}
             <GridItem colSpan={{ base: 1, lg: 9 }}>
-                <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
-                    {posts.data.map((post) => (
-                        <PostCard key={post.id} post={post} />
-                    ))}
-                </SimpleGrid>
+                {posts.data.length > 0 ? (
+                    <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+                        {posts.data.map((post) => (
+                            <PostCard key={post.id} post={post} />
+                        ))}
+                    </SimpleGrid>
+                ) : (
+                    <EmptyState.Root size="lg">
+                        <EmptyState.Content>
+                            <EmptyState.Indicator>
+                                <Icon as={LuSearch} boxSize={20} />
+                            </EmptyState.Indicator>
+                            <VStack textAlign="center">
+                                <EmptyState.Title>
+                                    Wah, Topiknya Belum Ketemu Nih!
+                                </EmptyState.Title>
+                                <EmptyState.Description>
+                                    Kami sudah mencari ke seluruh sudut
+                                    perpustakaan digital, tapi artikelnya belum
+                                    ada. Coba gunakan istilah yang lebih umum,
+                                    ya.
+                                </EmptyState.Description>
+                            </VStack>
+                        </EmptyState.Content>
+                    </EmptyState.Root>
+                )}
             </GridItem>
         </Layout>
     );

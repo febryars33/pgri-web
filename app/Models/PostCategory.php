@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\SlugRoute;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +13,7 @@ use Spatie\Sluggable\SlugOptions;
 #[Fillable(['name', 'slug'])]
 class PostCategory extends Model
 {
-    use HasSlug, SoftDeletes;
+    use HasSlug, SlugRoute, SoftDeletes;
 
     public function getSlugOptions(): SlugOptions
     {
@@ -27,10 +28,5 @@ class PostCategory extends Model
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
     }
 }

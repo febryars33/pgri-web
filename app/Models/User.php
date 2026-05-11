@@ -36,8 +36,13 @@ class User extends Authenticatable implements FilamentUser
     {
         $allowed = [
             'smaspgri1bandung@gmail.com',
-            'febryars33@gmail.com'
+            'febryars33@gmail.com',
         ];
+
+        if (app()->isProduction() === false) {
+            return true;
+        }
+
         if (in_array($this->email, $allowed)) {
             return true;
         }

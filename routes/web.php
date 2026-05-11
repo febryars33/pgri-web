@@ -3,6 +3,7 @@
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AcademicController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ExtracurricularController;
 use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\PostController;
@@ -15,10 +16,11 @@ Route::get('/about/facilities', FacilityController::class)->name('about.faciliti
 Route::get('/contact', ContactController::class)->name('contact');
 // Route::get('/academic', AcademicController::class)->name('academic');
 Route::get('/faq', FaqController::class)->name('faq');
-Route::get('/student-affairs', StudentAffairController::class)->name('student-affair');
+// Route::get('/student-affairs', StudentAffairController::class)->name('student-affair');
 Route::get('/posts/tag/{slug}', [PostController::class, 'tag'])->name('posts.tag');
 Route::get('/posts/category/{post_category}', [PostController::class, 'category'])->name('posts.category');
 Route::resource('/posts', PostController::class)->only(['index', 'show']);
+Route::resource('/extracurriculars', ExtracurricularController::class)->only(['index', 'show']);
 
 Route::get('/privacy-policy', fn () => inertia('privacy'))->name('privacy');
 

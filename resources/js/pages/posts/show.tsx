@@ -11,7 +11,6 @@ import {
     Separator,
     Grid,
     Icon,
-    Alert,
 } from '@chakra-ui/react';
 import { Head, Link } from '@inertiajs/react';
 import type { FileMimeType } from '@zag-js/file-utils';
@@ -25,6 +24,7 @@ import {
     LuFileText,
     LuTag,
 } from 'react-icons/lu';
+import HtmlRenderer from '@/components/ui/html-renderer';
 import { toaster } from '@/components/ui/toaster';
 import Layout from '@/layouts/post';
 import posts from '@/routes/posts';
@@ -158,7 +158,9 @@ export default function Show({ post }: Props) {
                             asChild
                         >
                             <Link
-                                href={posts.category(post.data.category?.slug)}
+                                href={posts.category(
+                                    post.data.category?.slug ?? '',
+                                )}
                             >
                                 {post.data.category?.name}
                             </Link>
@@ -223,132 +225,9 @@ export default function Show({ post }: Props) {
                         </Box>
                     )}
 
-                    <Box
-                        as="div"
-                        className="article-content"
-                        fontSize={{ base: '15px', md: '17px' }} // Font dasar sedikit diperhalus
-                        lineHeight="1.7"
-                        color="fg.muted"
-                        textAlign="justify"
-                        css={{
-                            // --- Headings (Lebih Ramping & Clear) ---
-                            '& h1': {
-                                fontSize: { base: '2xl', md: '3xl' }, // Tidak terlalu raksasa
-                                fontWeight: 'bold',
-                                color: 'fg.default',
-                                mt: '6',
-                                mb: '3',
-                                lineHeight: '1.2',
-                                letterSpacing: '-0.02em', // Sedikit dirapatkan agar terlihat modern
-                            },
-                            '& h2': {
-                                fontSize: { base: 'xl', md: '2xl' },
-                                fontWeight: 'semibold', // Diganti ke semibold agar lebih ramping
-                                color: 'fg.default',
-                                mt: '6',
-                                mb: '3',
-                                pb: '2',
-                                borderBottom: '1px solid',
-                                borderColor: 'border.subtle',
-                            },
-                            '& h3': {
-                                fontSize: { base: 'lg', md: 'xl' },
-                                fontWeight: 'semibold',
-                                color: 'fg.default',
-                                mt: '5',
-                                mb: '2',
-                            },
-                            '& h4': {
-                                fontSize: 'md',
-                                fontWeight: 'semibold',
-                                color: 'fg.default',
-                                mt: '4',
-                                mb: '2',
-                            },
-
-                            // --- Paragraphs ---
-                            '& p': {
-                                mb: '5',
-                                opacity: 0.9, // Memberikan kesan warna abu gelap yang soft
-                            },
-
-                            // --- Formatting ---
-                            '& strong, & b': {
-                                color: 'fg.default',
-                                fontWeight: 'semibold',
-                            },
-
-                            // --- Lists (Dibuat lebih ringkas) ---
-                            '& ul, & ol': {
-                                display: 'block', // Memastikan elemen dianggap sebagai list
-                                listStylePosition: 'outside', // Bullet ada di luar teks
-                                ml: '1.5rem', // Memberi ruang untuk bullet/angka agar tidak terpotong
-                                mb: '5',
-                                color: 'fg.muted',
-                            },
-                            '& ul': {
-                                listStyleType: 'disc !important', // Memaksa bullet bulat muncul
-                            },
-                            '& ol': {
-                                listStyleType: 'decimal !important', // Memaksa angka muncul
-                            },
-                            '& li': {
-                                display: 'list-item', // Memastikan tiap baris berperilaku sebagai list-item
-                                mb: '1.5',
-                                pl: '2', // Jarak antara bullet dan teks
-                                '&::marker': {
-                                    color: 'teal.600',
-                                    fontWeight: 'bold',
-                                },
-                            },
-
-                            // --- Quotes (Dibuat lebih tipis) ---
-                            '& blockquote': {
-                                borderLeftWidth: '3px', // Lebih tipis
-                                borderLeftColor: 'teal.500',
-                                pl: '5',
-                                py: '1',
-                                my: '6',
-                                bg: 'bg.subtle/50', // Transparansi sedikit agar soft
-                                fontStyle: 'italic',
-                                '& p': { mb: '0' },
-                            },
-
-                            // --- Media ---
-                            '& img': {
-                                borderRadius: '3xl', // Corner lebih kecil
-                                my: '6',
-                                mx: 'auto',
-                                maxW: '100%',
-                                height: 'auto',
-                            },
-
-                            // --- Tables (Minimalist Style) ---
-                            '& table': {
-                                width: '100%',
-                                my: '6',
-                                fontSize: 'sm',
-                                borderCollapse: 'separate',
-                                borderSpacing: 0,
-                            },
-                            '& th, & td': {
-                                borderBottomWidth: '1px', // Hanya garis bawah agar clean
-                                borderColor: 'border.subtle',
-                                p: '2',
-                                textAlign: 'left',
-                            },
-                            '& th': {
-                                fontWeight: 'semibold',
-                                color: 'fg.default',
-                            },
-
-                            // --- Divider ---
-                            '& hr': { my: '8', opacity: 0.5 },
-                        }}
-                        dangerouslySetInnerHTML={{
-                            __html: post.data.body ?? '',
-                        }}
-                        suppressHydrationWarning
+                    <HtmlRenderer
+                        content={post.data.body?.toString() ?? null}
+                        className="group"
                     />
 
                     {/* Attachment Section */}

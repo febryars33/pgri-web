@@ -1,6 +1,9 @@
 export interface PostCategory {
-    id: number;
+    id: number | null;
     name: string;
+    description: string | null;
     slug: string;
-    posts_count: number;
+    posts_count?: number;
+    created_at: null;
+    deleted_at: null;
 }

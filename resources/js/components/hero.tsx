@@ -220,7 +220,7 @@ export default function Hero() {
                             fontWeight={600}
                             gap={2}
                         >
-                            Daftar PPDB Sekarang
+                            Daftar SPMB Sekarang
                             <Icon as={LuArrowRight} boxSize={4} />
                         </Button>
 

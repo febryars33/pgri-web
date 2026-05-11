@@ -13,15 +13,14 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 #[Fillable([
     'post_id',
     'name',
-    'description'
+    'description',
 ])]
 class PostAttachment extends Model implements HasMedia
 {
     use InteractsWithMedia;
+
     /**
      * Get the post that owns the PostAttachment
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function post(): BelongsTo
     {

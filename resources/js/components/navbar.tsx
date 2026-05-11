@@ -13,7 +13,7 @@ import {
 import { Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import { FaFacebook, FaTwitter, FaInstagram, FaYoutube } from 'react-icons/fa6';
-import { LuMenu, LuPhone, LuMail, LuClock } from 'react-icons/lu';
+import { LuMenu, LuPhone, LuMail, LuClock, LuArrowRight } from 'react-icons/lu';
 import { ColorModeButton } from '@/components/ui/color-mode';
 import {
     DrawerBackdrop,
@@ -27,6 +27,7 @@ import {
     DrawerTrigger,
 } from '@/components/ui/drawer';
 import { contact, faq, home } from '@/routes';
+import extracurriculars from '@/routes/extracurriculars';
 import posts from '@/routes/posts';
 import logo from '../../images/logo-pgri.png';
 import Dropdown from './navbar/dropdown';
@@ -105,6 +106,10 @@ const NavLinks = () => (
         </Link>
 
         <Dropdown />
+
+        <Link href={extracurriculars.index()}>
+            <Text {...navLinkStyle}>Ekstrakurikuler</Text>
+        </Link>
 
         <Link href={faq()}>
             <Text {...navLinkStyle}>FAQ</Text>
@@ -213,7 +218,8 @@ export const Navbar = () => {
                                 px="6"
                                 display={{ base: 'none', md: 'flex' }}
                             >
-                                Daftar PPDB <Text ml="1">→</Text>
+                                Daftar SPMB
+                                <Icon as={LuArrowRight} />
                             </Button>
 
                             <Box display={{ base: 'flex', lg: 'none' }}>
@@ -243,7 +249,7 @@ export const Navbar = () => {
                                                 colorPalette="teal"
                                                 width="full"
                                             >
-                                                Daftar PPDB
+                                                Daftar SPMB
                                             </Button>
                                         </DrawerFooter>
                                         <DrawerCloseTrigger />

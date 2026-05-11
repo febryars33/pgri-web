@@ -164,7 +164,7 @@ export default function PPDBCTA() {
                             animation: `${shimmer} 3s infinite ease-in-out`,
                         }}
                     >
-                        <Link href="/ppdb">
+                        <Link href="#">
                             <span style={{ position: 'relative', zIndex: 1 }}>
                                 Daftar Sekarang
                             </span>

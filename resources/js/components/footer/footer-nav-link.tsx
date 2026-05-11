@@ -1,12 +1,14 @@
-import { HStack, Icon, Link, Text } from '@chakra-ui/react';
+import { HStack, Icon, Text } from '@chakra-ui/react';
+import { Link } from '@inertiajs/react';
 import { LuChevronRight } from 'react-icons/lu';
+import type { RouteDefinition } from '@/wayfinder';
 
 export default function FooterNavLink({
     children,
     href,
 }: {
     children: React.ReactNode;
-    href: string;
+    href: RouteDefinition<'get'> | string;
 }) {
     return (
         <Link href={href}>

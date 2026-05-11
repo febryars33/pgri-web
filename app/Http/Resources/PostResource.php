@@ -56,11 +56,10 @@ class PostResource extends JsonResource
                 'published_at_human' => $this->created_at?->diffForHumans(),
             ],
 
-            'can' => [
-                'update' => $request->user()?->can('update', $this->resource),
-                'delete' => $request->user()?->can('delete', $this->resource),
-            ],
+            // 'can' => [
+            //     'update' => $request->user()?->can('update', $this->resource),
+            //     'delete' => $request->user()?->can('delete', $this->resource),
+            // ],
         ];
     }
-
 }
