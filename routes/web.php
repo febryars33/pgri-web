@@ -17,6 +17,7 @@ Route::get('/contact', ContactController::class)->name('contact');
 Route::get('/faq', FaqController::class)->name('faq');
 Route::get('/student-affairs', StudentAffairController::class)->name('student-affair');
 Route::get('/posts/tag/{slug}', [PostController::class, 'tag'])->name('posts.tag');
+Route::get('/posts/category/{post_category}', [PostController::class, 'category'])->name('posts.category');
 Route::resource('/posts', PostController::class)->only(['index', 'show']);
 
 Route::get('/privacy-policy', fn () => inertia('privacy'))->name('privacy');

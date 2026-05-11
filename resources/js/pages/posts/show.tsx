@@ -150,13 +150,18 @@ export default function Show({ post }: Props) {
                     {/* Category & Date Meta */}
                     <HStack gap={3}>
                         <Badge
-                            colorScheme="teal"
+                            colorPalette="teal"
                             variant="subtle"
                             px={3}
                             py={1}
                             borderRadius="full"
+                            asChild
                         >
-                            {post.data.category?.name}
+                            <Link
+                                href={posts.category(post.data.category?.slug)}
+                            >
+                                {post.data.category?.name}
+                            </Link>
                         </Badge>
                         <HStack color="gray.500" fontSize="sm">
                             <LuCalendar />
@@ -182,8 +187,8 @@ export default function Show({ post }: Props) {
                     {/* Author Meta */}
                     <HStack gap={4} py={2}>
                         <Avatar.Root>
-                            <Avatar.Fallback name="Segun Adebayo" />
-                            <Avatar.Image src="https://bit.ly/sage-adebayo" />
+                            <Avatar.Fallback name="Admin Sekolah" />
+                            <Avatar.Image src="https://placehold.co/100?font=Poppins&text=AS" />
                         </Avatar.Root>
                         <VStack align="start" gap={0}>
                             <Text fontWeight="bold" fontSize="sm">

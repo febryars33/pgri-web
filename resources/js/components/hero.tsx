@@ -10,6 +10,10 @@ import {
     SimpleGrid,
     Icon,
     Image,
+    Dialog,
+    CloseButton,
+    Portal,
+    AspectRatio,
 } from '@chakra-ui/react';
 import { LuArrowRight, LuPlay, LuCheck, LuAward, LuStar } from 'react-icons/lu';
 
@@ -220,37 +224,80 @@ export default function Hero() {
                             <Icon as={LuArrowRight} boxSize={4} />
                         </Button>
 
-                        <Button
-                            variant="ghost"
+                        <Dialog.Root
                             size="lg"
-                            gap={3}
-                            fontWeight={500}
-                            color="fg"
-                            _hover={{ bg: 'bg.subtle' }}
-                            px={3}
+                            placement="center"
+                            motionPreset="scale"
+                            scrollBehavior="inside"
                         >
-                            <Flex
-                                align="center"
-                                justify="center"
-                                w="30px"
-                                h="30px"
-                                borderRadius="full"
-                                bg="teal.50"
-                                _dark={{ bg: 'teal.950' }}
-                                border="1px solid"
-                                borderColor="teal.200"
-                                _dark-borderColor="teal.800"
-                                flexShrink={0}
-                            >
-                                <Icon
-                                    as={LuPlay}
-                                    color="teal.600"
-                                    _dark={{ color: 'teal.400' }}
-                                    boxSize={4}
-                                />
-                            </Flex>
-                            Lihat Profil Sekolah
-                        </Button>
+                            <Dialog.Trigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="lg"
+                                    gap={3}
+                                    fontWeight={500}
+                                    color="fg"
+                                    // _hover={{ bg: 'bg.subtle' }}
+                                    px={3}
+                                >
+                                    <Flex
+                                        align="center"
+                                        justify="center"
+                                        w="30px"
+                                        h="30px"
+                                        borderRadius="full"
+                                        bg="teal.50"
+                                        _dark={{ bg: 'teal.950' }}
+                                        border="1px solid"
+                                        borderColor="teal.200"
+                                        _dark-borderColor="teal.800"
+                                        flexShrink={0}
+                                    >
+                                        <Icon
+                                            as={LuPlay}
+                                            color="teal.600"
+                                            _dark={{ color: 'teal.400' }}
+                                            boxSize={4}
+                                        />
+                                    </Flex>
+                                    Lihat Profil Sekolah
+                                </Button>
+                            </Dialog.Trigger>
+                            <Portal>
+                                <Dialog.Backdrop />
+                                <Dialog.Positioner>
+                                    <Dialog.Content>
+                                        <Dialog.Header>
+                                            <Dialog.Title>
+                                                Profil Sekolah
+                                            </Dialog.Title>
+                                        </Dialog.Header>
+                                        <Dialog.Body>
+                                            <AspectRatio>
+                                                <iframe
+                                                    title="naruto"
+                                                    src="https://www.youtube.com/embed/lShaELfx-Dc?si=noTLscTtvTqMLdIX"
+                                                    allowFullScreen
+                                                />
+                                            </AspectRatio>
+                                        </Dialog.Body>
+                                        <Dialog.Footer>
+                                            <Dialog.ActionTrigger asChild>
+                                                <Button
+                                                    variant="subtle"
+                                                    colorPalette="red"
+                                                >
+                                                    Tutup
+                                                </Button>
+                                            </Dialog.ActionTrigger>
+                                        </Dialog.Footer>
+                                        <Dialog.CloseTrigger asChild>
+                                            <CloseButton size="sm" />
+                                        </Dialog.CloseTrigger>
+                                    </Dialog.Content>
+                                </Dialog.Positioner>
+                            </Portal>
+                        </Dialog.Root>
                     </HStack>
                 </VStack>
 

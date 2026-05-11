@@ -18,15 +18,8 @@ import Footer from '@/components/footer';
 import { Navbar } from '@/components/navbar';
 import SPMB from '@/components/post/spmb';
 import posts from '@/routes/posts';
+import type { PostCategory } from '@/types/models/post-category';
 import type { Tag } from '@/types/models/tag';
-
-const CATEGORIES = [
-    'Pendidikan',
-    'Prestasi',
-    'Kegiatan',
-    'Pengumuman',
-    'Ekskul',
-];
 
 const SidebarSection = ({
     title,
@@ -63,8 +56,9 @@ const SidebarSection = ({
 );
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-    const { tags } = usePage<{
+    const { tags, post_categories } = usePage<{
         tags: Tag[];
+        post_categories: PostCategory[];
     }>().props;
 
     const { url } = usePage();
@@ -122,9 +116,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                     {/* Categories */}
                                     <SidebarSection title="Kategori">
                                         <VStack align="stretch" gap={2}>
-                                            {CATEGORIES.map((cat) => (
+                                            {post_categories.map((category) => (
                                                 /* PINDAHKAN KEY KE SINI (Elemen Terluar) */
-                                                <Link key={cat} href="#">
+                                                <Link
+                                                    key={category.id}
+                                                    href={posts.category(
+                                                        category.slug,
+                                                    )}
+                                                >
                                                     <HStack // Gunakan HStack daripada Text untuk pembungkus agar valid secara HTML
                                                         justifyContent="space-between"
                                                         py={2}
@@ -138,9 +137,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                                             },
                                                         }}
                                                     >
-                                                        <Text fontSize="sm">
-                                                            {cat}
-                                                        </Text>
+                                                        <HStack>
+                                                            <Text fontSize="sm">
+                                                                {category.name}
+                                                            </Text>
+                                                            <Badge
+                                                                colorPalette={
+                                                                    category.slug ===
+                                                                    'uncategorized'
+                                                                        ? 'yellow'
+                                                                        : 'teal'
+                                                                }
+                                                            >
+                                                                {
+                                                                    category.posts_count
+                                                                }
+                                                            </Badge>
+                                                        </HStack>
                                                         <LuChevronRight
                                                             size={14}
                                                         />

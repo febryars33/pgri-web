@@ -20,10 +20,13 @@ import { LuCalendar, LuImageOff, LuUser } from 'react-icons/lu';
 import Layout from '@/layouts/post';
 import posts from '@/routes/posts';
 import type { Post } from '@/types/models/post';
-
 interface Props {
     posts: {
         data: Post[];
+    };
+    seo: {
+        title: string;
+        description: string;
     };
 }
 
@@ -148,10 +151,13 @@ const PostCard = ({ post }: { post: Post }) => (
     </Link>
 );
 
-export default function Index({ posts }: Props) {
+export default function Index({ posts, seo }: Props) {
     return (
         <Layout>
-            <Head title="Berita Sekolah" />
+            <Head>
+                <title>{seo.title}</title>
+                <meta name="description" content={seo.description} />
+            </Head>
             {/* Header */}
             <GridItem
                 colSpan={{

@@ -47,7 +47,7 @@ export default function Faq({
         return () => clearTimeout(delay);
     }, [search]);
 
-    const phoneNumber = '6281234567890';
+    const phoneNumber = '0222030708';
 
     const message = encodeURIComponent(
         `Halo admin, saya tidak menemukan jawaban di halaman FAQ.`,

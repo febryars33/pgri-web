@@ -63,7 +63,7 @@ const TopNav = () => (
                 <HStack gap="6">
                     <HStack gap="1.5">
                         <Icon as={LuPhone} boxSize="3.5" />
-                        <Text>+62 22 123-4567</Text>
+                        <Text>(022) 2030708</Text>
                     </HStack>
                     <HStack gap="1.5">
                         <Icon as={LuMail} boxSize="3.5" />
