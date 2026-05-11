@@ -45,11 +45,11 @@ class HandleInertiaRequests extends Middleware
                 'spmb' => [
                     'open' => true,
                     'hero' => [
-                        'badge' => 'Penerimaan Peserta Didik Baru 2025/2026 Telah Dibuka!',
+                        'badge' => 'Penerimaan Peserta Didik Baru 2026/2027 Telah Dibuka!',
                         'button' => 'Yuk, Daftar Sekarang!',
                     ],
                     'cta' => [
-                        'badge' => 'Tahun Ajaran 2025/2026',
+                        'badge' => 'Tahun Ajaran 2026/2027',
                         'heading' => 'Penerimaan Peserta Didik Baru',
                         'body' => 'Daftarkan dirimu dan raih masa depan cerah bersama SMAS PGRI 1 Bandung.',
                         'button' => 'Daftar Sekarang',

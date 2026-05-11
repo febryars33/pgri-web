@@ -222,7 +222,7 @@ export default function Academic() {
                                                         color="gray.500"
                                                     >
                                                         Update Semester Ganjil
-                                                        2025/2026 tersedia.
+                                                        2026/2027 tersedia.
                                                     </Text>
                                                 </Box>
                                             </Flex>

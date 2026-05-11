@@ -1,13 +1,16 @@
 import { Box } from '@chakra-ui/react';
-import StudentKeadaanChart from '@/components/chart/StudentKeadaanChart';
-import Layout from '@/layouts/default';
 
 export default function Blank() {
     return (
-        <Layout>
+        <>
             <Box minH="100vh" py="20">
-                <StudentKeadaanChart />
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Consectetur omnis reprehenderit expedita adipisci voluptatem
+                    aperiam voluptatum a veniam? Veniam soluta voluptate ex a
+                    debitis autem doloremque corporis, iure animi quo?
+                </p>
             </Box>
-        </Layout>
+        </>
     );
 }

@@ -104,7 +104,7 @@ export default function PPDBCTA() {
                             fontWeight="800"
                             letterSpacing="1.5px"
                         >
-                            TAHUN AJARAN 2025 / 2026
+                            TAHUN AJARAN 2026/2027
                         </Badge>
                         <VStack
                             align={{ base: 'center', md: 'flex-start' }}

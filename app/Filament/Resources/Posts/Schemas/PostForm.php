@@ -61,6 +61,7 @@ class PostForm
                                     ->downloadable()
                                     ->deletable()
                             ])
+                            ->defaultItems(0)
                             ->columns(2)
                     ])
             ]);

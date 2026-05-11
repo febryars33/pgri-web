@@ -14,8 +14,8 @@ export interface Post {
     // Sesuai grup 'media' di Resource
     media: {
         cover: {
-            preview?: string;
-            original?: string;
+            preview?: string | null;
+            original?: string | null;
         };
         attachments?: PostAttachment[]
     };

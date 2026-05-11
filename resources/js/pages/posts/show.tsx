@@ -196,25 +196,27 @@ export default function Show({ post }: Props) {
                     </HStack>
 
                     {/* Featured Image */}
-                    <Box
-                        borderRadius="2xl"
-                        overflow="hidden"
-                        shadow="xl"
-                        role="group" // Menjadikan Box sebagai grup agar hover bisa dideteksi oleh anak-anaknya
-                    >
-                        <Image
-                            src={post.data.media.cover.original}
-                            alt="Featured Image"
-                            w="full"
-                            h={{ base: '300px', md: '500px' }}
-                            objectFit="cover"
-                            transition="all 0.5s ease-in-out" // Durasi zoom (0.5 detik agar elegan)
-                            _hover={{
-                                transform: 'scale(1.05)', // Efek zoom 5%
-                                filter: 'brightness(0.9)', // Sedikit meredup agar teks (jika ada) lebih kontras
-                            }}
-                        />
-                    </Box>
+                    {post?.data?.media?.cover?.original && (
+                        <Box
+                            borderRadius="2xl"
+                            overflow="hidden"
+                            shadow="xl"
+                            role="group"
+                        >
+                            <Image
+                                src={post.data.media.cover.original}
+                                alt="Featured Image"
+                                w="full"
+                                h={{ base: '300px', md: '500px' }}
+                                objectFit="cover"
+                                transition="all 0.5s ease-in-out"
+                                _hover={{
+                                    transform: 'scale(1.05)',
+                                    filter: 'brightness(0.9)',
+                                }}
+                            />
+                        </Box>
+                    )}
 
                     <Box
                         as="div"

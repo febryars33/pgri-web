@@ -3,15 +3,19 @@
 namespace App\Models;
 
 use App\Enums\PostStatus;
+use App\Observers\PostObserver;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Override;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -30,9 +34,12 @@ use Spatie\Tags\HasTags;
     'slug',
 ])]
 #[Appends(['excerpt', 'formatted_created_at'])]
+#[ObservedBy(PostObserver::class)]
 class Post extends Model implements HasMedia
 {
     use HasSlug, HasTags, InteractsWithMedia, SoftDeletes;
+
+    protected $with = ['post_category'];
 
     public function getSlugOptions(): SlugOptions
     {
@@ -121,5 +128,18 @@ class Post extends Model implements HasMedia
     public function attachments()
     {
         return $this->media()->where('collection_name', 'attachments');
+    }
+
+    public function scopePublished(Builder $query)
+    {
+        return $query->where('status', PostStatus::PUBLISHED);
+    }
+
+    #[Override]
+    public function resolveRouteBinding(mixed $value, $field = null): ?Model
+    {
+        return $this->published()
+            ->where($field ?? $this->getRouteKeyName(), $value)
+            ->firstOrFail();
     }
 }

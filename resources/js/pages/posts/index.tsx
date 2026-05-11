@@ -11,9 +11,12 @@ import {
     HStack,
     Badge,
     SimpleGrid,
+    Flex,
+    Square,
+    Icon,
 } from '@chakra-ui/react';
 import { Head, Link } from '@inertiajs/react';
-import { LuCalendar, LuUser } from 'react-icons/lu';
+import { LuCalendar, LuImageOff, LuUser } from 'react-icons/lu';
 import Layout from '@/layouts/post';
 import posts from '@/routes/posts';
 import type { Post } from '@/types/models/post';
@@ -40,27 +43,79 @@ const PostCard = ({ post }: { post: Post }) => (
                 _dark: { bg: 'teal.950' },
             }}
         >
-            <Box position="relative" h="220px" overflow="hidden">
-                <Image
-                    src={post.media.cover.preview}
-                    alt={post.title}
-                    w="full"
-                    h="full"
-                    objectFit="cover"
-                    transition="transform 0.5s"
-                    _groupHover={{ transform: 'scale(1.05)' }}
-                    loading="lazy"
-                />
+            <Box position="relative" h="220px" overflow="hidden" bg="gray.100">
+                {post.media?.cover?.preview ? (
+                    <Image
+                        src={post.media.cover.preview}
+                        alt={post.title}
+                        w="full"
+                        h="full"
+                        objectFit="cover"
+                        transition="transform 0.5s"
+                        _groupHover={{ transform: 'scale(1.05)' }}
+                        loading="lazy"
+                    />
+                ) : (
+                    /* UI Pengganti jika gambar null */
+                    <Flex
+                        w="full"
+                        h="full"
+                        direction="column"
+                        align="center"
+                        justify="center"
+                        gap={3}
+                        px={6}
+                        // Best practice 3.x: Gunakan semantic tokens untuk dark mode otomatis
+                        bg="bg.muted"
+                        position="relative"
+                        overflow="hidden"
+                    >
+                        {/* Dekorasi subtle menggunakan mask atau gradient blur */}
+                        <Box
+                            position="absolute"
+                            inset="0"
+                            bgGradient="to-br"
+                            gradientFrom="colorPalette.muted"
+                            gradientTo="transparent"
+                            opacity="0.2"
+                        />
+
+                        {/* Icon Placeholder menggunakan Square/Circle component */}
+                        <Square
+                            size="12"
+                            bg="bg.emphasized"
+                            borderRadius="l3" // Token radius terbaru
+                            shadow="sm"
+                        >
+                            <Icon size="2xl" color="fg.muted">
+                                <LuImageOff />
+                            </Icon>
+                        </Square>
+
+                        <Text
+                            fontSize="lg"
+                            fontWeight="medium"
+                            color="fg.subtle"
+                            textAlign="center"
+                            lineClamp={2} // Pengganti noOfLines di beberapa setup v3
+                            zIndex="1"
+                        >
+                            {post.title}
+                        </Text>
+                    </Flex>
+                )}
+
                 <Badge
                     position="absolute"
                     top={4}
                     left={4}
-                    variant="solid"
-                    borderRadius="full"
+                    variant="subtle"
+                    colorPalette={post.category ? 'yellow' : 'red'}
                 >
-                    {post.category?.name}
+                    {post.category ? post.category.name : 'Uncategorized'}
                 </Badge>
             </Box>
+
             <Stack p={6} gap={3}>
                 <HStack
                     gap={4}

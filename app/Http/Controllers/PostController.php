@@ -14,8 +14,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with(['post_category'])
-            ->where('status', PostStatus::PUBLISHED)
+        $posts = Post::published()
             ->latest()
             ->get();
 
@@ -30,7 +29,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $post->load(['post_category', 'tags', 'post_attachments']);
+        $post->load(['tags', 'post_attachments']);
 
         return inertia('posts/show', [
             'post' => new PostResource($post),
@@ -41,8 +40,7 @@ class PostController extends Controller
     public function tag(string $slug)
     {
         $posts = Post::withAllTags($slug)
-            ->with(['post_category'])
-            ->where('status', PostStatus::PUBLISHED)
+            ->published()
             ->latest()
             ->get();
 
@@ -54,9 +52,12 @@ class PostController extends Controller
 
     protected function tags()
     {
-        return Tag::withCount('posts')
+        return Tag::withCount(['posts' => function($query) {
+            /** @var Post $query */
+            $query->published();
+        }])
             ->orderBy('posts_count', 'desc')
-            ->limit(10)
+            ->limit(20)
             ->get();
     }
 }
