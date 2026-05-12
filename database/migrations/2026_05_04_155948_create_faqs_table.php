@@ -3,6 +3,7 @@
 use App\Models\FaqCategory;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -25,9 +26,11 @@ return new class extends Migration
                 ->nullOnDelete();
             $table->string('title');
             $table->longText('description')->nullable();
-
-            $table->fullText(['title', 'description']);
             $table->timestamps();
+
+            if (DB::getDriverName() !== 'sqlite') {
+                $table->fullText(['title', 'description']);
+            }
         });
     }
 

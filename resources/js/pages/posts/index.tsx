@@ -12,12 +12,13 @@ import {
     Badge,
     SimpleGrid,
     Flex,
-    Square,
     Icon,
     EmptyState,
     VStack,
+    Spinner,
+    Center,
 } from '@chakra-ui/react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, InfiniteScroll, Link } from '@inertiajs/react';
 import { LuCalendar, LuImageOff, LuSearch, LuUser } from 'react-icons/lu';
 import Layout from '@/layouts/post';
 import posts from '@/routes/posts';
@@ -52,7 +53,7 @@ const PostCard = ({ post }: { post: Post }) => (
                 {post.media?.cover?.preview ? (
                     <Image
                         src={post.media.cover.preview}
-                        alt={post.title}
+                        alt={post.title as string}
                         w="full"
                         h="full"
                         objectFit="cover"
@@ -86,27 +87,9 @@ const PostCard = ({ post }: { post: Post }) => (
                         />
 
                         {/* Icon Placeholder menggunakan Square/Circle component */}
-                        <Square
-                            size="12"
-                            bg="bg.emphasized"
-                            borderRadius="l3" // Token radius terbaru
-                            shadow="sm"
-                        >
-                            <Icon size="2xl" color="fg.muted">
-                                <LuImageOff />
-                            </Icon>
-                        </Square>
-
-                        <Text
-                            fontSize="lg"
-                            fontWeight="medium"
-                            color="fg.subtle"
-                            textAlign="center"
-                            lineClamp={2} // Pengganti noOfLines di beberapa setup v3
-                            zIndex="1"
-                        >
-                            {post.title}
-                        </Text>
+                        <Icon color="fg.error">
+                            <LuImageOff size={128} />
+                        </Icon>
                     </Flex>
                 )}
 
@@ -142,9 +125,39 @@ const PostCard = ({ post }: { post: Post }) => (
                     </HStack>
                 </HStack>
                 <Heading size="md" lineClamp={2} fontWeight="bold">
-                    <Text _groupHover={{ color: 'teal.600' }}>
-                        {post.title}
-                    </Text>
+                    <Text
+                        _groupHover={{ color: 'teal.600' }}
+                        dangerouslySetInnerHTML={{ __html: post.title }}
+                        css={{
+                            '& .search-highlight': {
+                                display: 'inline-block',
+
+                                px: '1.5',
+                                py: '0.5',
+
+                                borderRadius: 'md',
+
+                                bg: 'teal.subtle',
+                                color: 'teal.fg',
+
+                                fontWeight: 'semibold',
+                                transition: 'all 0.2s ease',
+
+                                // Better readability
+                                // lineHeight: '1.4',
+
+                                // Smooth dark mode rendering
+                                // boxDecorationBreak: 'clone',
+                                // WebkitBoxDecorationBreak: 'clone',
+                            },
+
+                            '.group:hover & .search-highlight': {
+                                bg: 'teal.solid',
+                                color: 'white',
+                                borderColor: 'teal.solid',
+                            },
+                        }}
+                    />
                 </Heading>
                 <Text
                     fontSize="sm"
@@ -184,11 +197,25 @@ export default function Index({ posts, seo }: Props) {
             {/* Main Content (9 Columns) */}
             <GridItem colSpan={{ base: 1, lg: 9 }}>
                 {posts.data.length > 0 ? (
-                    <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
-                        {posts.data.map((post) => (
-                            <PostCard key={post.id} post={post} />
-                        ))}
-                    </SimpleGrid>
+                    <InfiniteScroll
+                        data="posts"
+                        buffer={500}
+                        loading={() => (
+                            <Center py="10" width="full">
+                                <Spinner
+                                    size="xl" // Ukuran lebih besar agar terlihat jelas
+                                    color="yellow.600" // Cara penulisan warna di v3
+                                    borderWidth="3px"
+                                />
+                            </Center>
+                        )}
+                    >
+                        <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+                            {posts.data.map((post) => (
+                                <PostCard key={post.id} post={post} />
+                            ))}
+                        </SimpleGrid>
+                    </InfiniteScroll>
                 ) : (
                     <EmptyState.Root size="lg">
                         <EmptyState.Content>

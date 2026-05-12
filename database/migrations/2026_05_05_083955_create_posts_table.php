@@ -4,6 +4,7 @@ use App\Enums\PostStatus;
 use App\Models\PostCategory;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -36,7 +37,9 @@ return new class extends Migration
             $table->softDeletes();
             $table->timestamps();
 
-            $table->fullText(['title', 'body']);
+            if (DB::getDriverName() !== 'sqlite') {
+                $table->fullText(['title', 'body']);
+            }
         });
     }
 

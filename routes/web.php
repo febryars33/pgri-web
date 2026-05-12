@@ -17,9 +17,12 @@ Route::get('/contact', ContactController::class)->name('contact');
 // Route::get('/academic', AcademicController::class)->name('academic');
 Route::get('/faq', FaqController::class)->name('faq');
 // Route::get('/student-affairs', StudentAffairController::class)->name('student-affair');
-Route::get('/posts/tag/{slug}', [PostController::class, 'tag'])->name('posts.tag');
-Route::get('/posts/category/{post_category}', [PostController::class, 'category'])->name('posts.category');
-Route::resource('/posts', PostController::class)->only(['index', 'show']);
+
+Route::get('/posts/tag/{tag_slug}', [PostController::class, 'index'])->name('posts.tag');
+Route::get('/posts/category/{category_slug}', [PostController::class, 'index'])->name('posts.category');
+Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
+Route::get('/posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
+
 Route::resource('/extracurriculars', ExtracurricularController::class)->only(['index', 'show']);
 
 Route::get('/privacy-policy', fn () => inertia('privacy'))->name('privacy');

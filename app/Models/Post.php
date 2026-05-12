@@ -6,16 +6,19 @@ use App\Enums\PostStatus;
 use App\Observers\PostObserver;
 use App\Traits\SlugRoute;
 use Carbon\Carbon;
+use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
 use Override;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
@@ -38,7 +41,8 @@ use Spatie\Tags\HasTags;
 #[ObservedBy(PostObserver::class)]
 class Post extends Model implements HasMedia
 {
-    use HasSlug, HasTags, InteractsWithMedia, SlugRoute, SoftDeletes;
+    /** @use HasFactory<PostFactory> */
+    use HasFactory, HasSlug, HasTags, InteractsWithMedia, SlugRoute, SoftDeletes, Searchable;
 
     protected $with = ['post_category'];
 
@@ -93,6 +97,35 @@ class Post extends Model implements HasMedia
                 ->locale('id')
                 ->translatedFormat('l, d F Y'),
         );
+    }
+
+    public function scoutMetadata(): array
+    {
+        return [
+            '_formatted' => $this->scout_metadata['_formatted'] ?? null,
+        ];
+    }
+
+    public function searchableAs(): string
+    {
+        return 'posts';
+    }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id'    => (int) $this->id,
+            'post_category_id' => $this->post_category_id,
+            'title' => $this->title,
+            'body'  => strip_tags($this->body), // Bersihkan HTML agar indeks bersih
+            'slug'  => $this->slug,
+            'category_name' => $this->post_category->name, // Memungkinkan cari artikel berdasarkan nama kategori
+            'category_slug' => $this->post_category->slug,
+            'status' => $this->status,
+            'tags' => $this->tags->pluck('slug')->toArray(),
+            'created_at' => $this->created_at->timestamp,
+            'updated_at' => $this->updated_at->timestamp,
+        ];
     }
 
     /**

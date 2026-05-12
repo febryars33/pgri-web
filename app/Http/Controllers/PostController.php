@@ -7,26 +7,35 @@ use App\Models\Post;
 use App\Models\PostCategory;
 use App\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Meilisearch\Endpoints\Indexes;
 
 class PostController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::published()
-            ->latest()
-            ->get();
+        $filters = $this->filters($request);
 
         return inertia('posts/index', [
-            'posts' => PostResource::collection($posts),
+            'posts' => Inertia::scroll(
+                fn () => PostResource::collection(
+                    $this->getPosts($filters)
+                )
+            ),
+
             'tags' => $this->getTags(),
             'post_categories' => $this->getPostCategories(),
-            'seo' => [
-                'title' => 'Berita Sekolah',
-                'description' => 'Informasi terbaru seputar kegiatan dan prestasi SMAS PGRI 1 Bandung',
-            ],
+
+            'filters' => $request->only(['tag_slug', 'category_slug', 'search']),
+
+            'seo' => $this->generateSeoData(
+                $filters['tag_slug'],
+                $filters['category_slug'],
+            ),
         ]);
     }
 
@@ -35,7 +44,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $post->load(['tags', 'post_attachments']);
+        $post->load(['tags', 'post_attachments', 'post_category']);
 
         return inertia('posts/show', [
             'post' => new PostResource($post),
@@ -48,63 +57,153 @@ class PostController extends Controller
         ]);
     }
 
-    public function tag(string $slug)
+    private function getPosts(array $filters)
     {
-        $posts = Post::withAllTags($slug)
-            ->published()
-            ->latest()
-            ->get();
+        $search = $filters['search'];
 
-        return inertia('posts/index', [
-            'posts' => PostResource::collection($posts),
-            'tags' => $this->getTags(),
-            'post_categories' => $this->getPostCategories(),
-            'seo' => [
-                'title' => 'Berita Sekolah',
-                'description' => 'Informasi terbaru seputar kegiatan dan prestasi SMAS PGRI 1 Bandung',
-            ],
-        ]);
-    }
+        // ======================================================
+        // NORMAL QUERY (NO SEARCH)
+        // ======================================================
 
-    public function category(string $slug)
-    {
-        // 1. Cek apakah ini permintaan untuk Uncategorized
-        if ($slug === 'uncategorized') {
-            $posts = Post::published()
-                ->whereNull('post_category_id') // Post tanpa kategori
+        if (blank($search)) {
+            return Post::query()
+                ->with([
+                    'post_category',
+                    'tags',
+                ])
+                ->where('status', 'published')
+
+                // ======================================================
+                // TAG FILTER (SPATIE TAGS)
+                // ======================================================
+
+                ->when(
+                    filled($filters['tag_slug']),
+                    fn ($query) => $query->withAnyTags(
+                        [$filters['tag_slug']]
+                    )
+                )
+
+                // ======================================================
+                // CATEGORY FILTER
+                // ======================================================
+
+                ->when(
+                    filled($filters['category_slug']),
+                    function ($query) use ($filters) {
+                        $slug = $filters['category_slug'];
+
+                        if ($filters['category_slug'] === 'uncategorized') {
+                            return $query->whereNull(
+                                'post_category_id'
+                            );
+                        }
+
+                        return $query->whereRelation('post_category', 'slug', $slug);
+                    }
+                )
+
                 ->latest()
-                ->get();
-
-            $categoryName = __('Uncategorized');
-        } else {
-            // 2. Jika bukan, cari kategori di DB, jika tidak ada baru 404
-            $postCategory = PostCategory::where('slug', $slug)->firstOrFail();
-
-            $posts = $postCategory->posts()
-                ->published()
-                ->latest()
-                ->get();
-
-            $categoryName = $postCategory->name;
+                ->paginate(12)
+                ->withQueryString();
         }
 
-        $title = function () use ($slug, $categoryName) {
-            if ($slug === 'uncategorized') {
-                return 'Artikel '.__('Uncategorized');
+        // ======================================================
+        // MEILISEARCH QUERY
+        // ======================================================
+
+        $query = Post::search(
+            $search,
+            function (
+                Indexes $index,
+                string $query,
+                array $options
+            ) {
+                $options['attributesToHighlight'] = [
+                    'title',
+                ];
+
+                $options['highlightPreTag']
+                    = '<mark class="search-highlight">';
+
+                $options['highlightPostTag']
+                    = '</mark>';
+
+                return $index->search($query, $options);
             }
+        );
 
-            return "Kategori artikel: {$categoryName}";
-        };
+        // ======================================================
+        // REQUIRED FILTERS
+        // ======================================================
 
-        return inertia('posts/index', [
-            'posts' => PostResource::collection($posts),
-            'tags' => $this->getTags(),
-            'post_categories' => $this->getPostCategories(),
-            'seo' => [
-                'title' => $title(),
-                'description' => "Menampilkan semua artikel dalam kategori {$categoryName}. Baca informasi terbaru hanya di ".config('app.name'),
-            ],
-        ]);
+        $query->where('status', 'published');
+
+        // ======================================================
+        // TAG FILTER (SPATIE TAGS)
+        // ======================================================
+
+        if (filled($filters['tag_slug'])) {
+            $query->where(
+                'tags',
+                $filters['tag_slug']
+            );
+        }
+
+        // ======================================================
+        // CATEGORY FILTER
+        // ======================================================
+
+        if (filled($filters['category_slug'])) {
+            if ($filters['category_slug'] === 'uncategorized') {
+                $query->where(
+                    'category_slug',
+                    null
+                );
+            } else {
+                $query->where(
+                    'category_slug',
+                    $filters['category_slug']
+                );
+            }
+        }
+
+        return $query
+            ->query(
+                fn ($query) => $query->with([
+                    'post_category',
+                    'tags',
+                ])
+            )
+            ->paginate(12)
+            ->withQueryString();
+    }
+
+    private function generateSeoData(?string $tag, ?string $cat)
+    {
+        $title = 'Berita Sekolah';
+        if ($tag) $title = "Topik Terpopuler: " . str($tag)->title();
+        if ($cat) $title = "Daftar Berita Kategori " . str($cat)->title();
+
+        return [
+            'title' => $title,
+            'description' => 'Informasi terbaru seputar kegiatan dan prestasi SMAS PGRI 1 Bandung',
+        ];
+    }
+
+    private function filters(Request $request): array
+    {
+        return [
+            'search' => trim(
+                $request->string('search')->toString()
+            ),
+
+            'tag_slug' => $request->route('tag_slug'),
+
+            'category_slug' => $request->route(
+                'category_slug'
+            ),
+        ];
     }
 
     protected function getTags()

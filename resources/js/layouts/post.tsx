@@ -6,17 +6,16 @@ import {
     GridItem,
     Heading,
     HStack,
-    Input,
-    InputGroup,
     Separator,
     Text,
     VStack,
 } from '@chakra-ui/react';
 import { Link, usePage } from '@inertiajs/react';
-import { LuChevronRight, LuSearch, LuTag } from 'react-icons/lu';
+import { LuChevronRight, LuTag } from 'react-icons/lu';
 import Footer from '@/components/footer';
 import { Navbar } from '@/components/navbar';
 import SPMB from '@/components/post/spmb';
+import SearchInput from '@/components/search-input';
 import posts from '@/routes/posts';
 import type { PostCategory } from '@/types/models/post-category';
 import type { Tag } from '@/types/models/tag';
@@ -93,12 +92,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 <VStack
                                     align="stretch"
                                     gap={2}
-                                    position={{ base: 'static', lg: 'sticky' }}
                                     top={{ lg: '80px' }}
                                 >
                                     {/* Search */}
                                     <SidebarSection title="Cari Berita">
-                                        <InputGroup
+                                        <SearchInput placeholder="Cari postingan..." />
+                                        {/* <InputGroup
                                             flex={1}
                                             startElement={<LuSearch />}
                                         >
@@ -110,7 +109,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                                     _dark: 'whiteAlpha.100',
                                                 }}
                                             />
-                                        </InputGroup>
+                                        </InputGroup> */}
                                     </SidebarSection>
 
                                     {/* Categories */}

@@ -5,7 +5,7 @@ import type { Tag } from "./tag";
 
 export interface Post {
     id: number;
-    title: string;
+    title: string | TrustedHTML;
     slug: string;
     status: PostStatus;
     excerpt: string;

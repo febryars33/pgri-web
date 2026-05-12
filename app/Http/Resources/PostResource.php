@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Post;
 use App\Models\PostAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -15,9 +16,16 @@ class PostResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $scout = \Closure::bind(function(Post $model) {
+            return $model->scoutMetadata;
+        }, null, $this->resource);
+
+        $metadata = $scout($this->resource) ?? [];
+        $formatted = $metadata['_formatted'] ?? null;
+
         return [
             'id' => $this->id,
-            'title' => $this->title,
+            'title' => $formatted['title'] ?? $this->title,
             'slug' => $this->slug,
             'status' => $this->status,
             'excerpt' => $this->excerpt,
@@ -55,11 +63,6 @@ class PostResource extends JsonResource
                 'published_at' => $this->created_at?->format('d M Y'),
                 'published_at_human' => $this->created_at?->diffForHumans(),
             ],
-
-            // 'can' => [
-            //     'update' => $request->user()?->can('update', $this->resource),
-            //     'delete' => $request->user()?->can('delete', $this->resource),
-            // ],
         ];
     }
 }
