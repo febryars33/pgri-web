@@ -12,6 +12,16 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('extracurricular_categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->text('description')->nullable();
+            $table->string('icon')
+                ->nullable()
+                ->comment('Lucide Icons');
+        });
+
         Schema::create('extracurriculars', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(ExtracurricularCategory::class)
@@ -25,6 +35,8 @@ return new class extends Migration
             $table->json('mentors')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+
+            $table->fullText(['name', 'description']);
         });
     }
 
@@ -33,6 +45,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('extracurricular_categories');
         Schema::dropIfExists('extracurriculars');
     }
 };

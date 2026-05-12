@@ -12,6 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('faq_categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+        });
+
         Schema::create('faqs', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(FaqCategory::class)
@@ -21,7 +26,7 @@ return new class extends Migration
             $table->string('title');
             $table->longText('description')->nullable();
 
-            // $table->fullText(['title', 'description']);
+            $table->fullText(['title', 'description']);
             $table->timestamps();
         });
     }
@@ -31,6 +36,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('faq_categories');
         Schema::dropIfExists('faqs');
     }
 };

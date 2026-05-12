@@ -18,10 +18,13 @@ class PostsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->searchable()
             ->columns([
                 TextColumn::make('post_category.name')
+                    ->label('Kategori')
                     ->searchable(),
                 TextColumn::make('title')
+                    ->label('Judul')
                     ->searchable(),
                 TextColumn::make('status')
                     ->badge()

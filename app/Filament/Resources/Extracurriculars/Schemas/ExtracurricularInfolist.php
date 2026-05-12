@@ -74,71 +74,6 @@ class ExtracurricularInfolist
                     ]),
 
                 // ======================================================
-                // DESCRIPTION
-                // ======================================================
-
-                Section::make('Deskripsi')
-                    ->description('Informasi lengkap mengenai ekstrakurikuler.')
-                    ->icon('heroicon-m-book-open')
-                    ->collapsible()
-                    ->persistCollapsed()
-                    ->columnSpan([
-                        'default' => 12,
-                        'xl' => 8,
-                    ])
-                    ->schema([
-                        TextEntry::make('description')
-                            ->hiddenLabel()
-                            ->html()
-                            ->prose()
-                            ->placeholder('Belum ada deskripsi.')
-                            ->extraAttributes([
-                                'class' => '
-                                    max-w-none
-                                    prose-neutral
-                                    dark:prose-invert
-                                    prose-headings:font-bold
-                                    prose-p:text-gray-600
-                                    dark:prose-p:text-gray-300
-                                    prose-a:text-primary-600
-                                    dark:prose-a:text-primary-400
-                                    prose-img:rounded-2xl
-                                    prose-img:shadow-sm
-                                    prose-pre:rounded-2xl
-                                ',
-                            ]),
-                    ]),
-
-                // ======================================================
-                // SIDEBAR INFO
-                // ======================================================
-
-                Section::make('Informasi')
-                    ->icon('heroicon-m-information-circle')
-                    ->columnSpan([
-                        'default' => 12,
-                        'xl' => 4,
-                    ])
-                    ->compact()
-                    ->schema([
-                        TextEntry::make('created_at')
-                            ->label('Dibuat')
-                            ->dateTime('d F Y H:i'),
-
-                        TextEntry::make('updated_at')
-                            ->label('Terakhir Diupdate')
-                            ->since(),
-
-                        TextEntry::make('mentors_count')
-                            ->label('Jumlah Pelatih')
-                            ->state(
-                                fn ($record): int => collect($record->mentors)->count()
-                            )
-                            ->badge()
-                            ->color('primary'),
-                    ]),
-
-                // ======================================================
                 // MENTORS
                 // ======================================================
 
@@ -173,6 +108,71 @@ class ExtracurricularInfolist
                                             ->color('gray')
                                             ->placeholder('-'),
                                     ]),
+                            ]),
+                    ]),
+
+                // ======================================================
+                // SIDEBAR INFO
+                // ======================================================
+
+                Section::make('Informasi')
+                    ->icon('heroicon-m-information-circle')
+                    ->columnSpan([
+                        'default' => 12,
+                        'xl' => 4,
+                    ])
+                    ->compact()
+                    ->schema([
+                        TextEntry::make('created_at')
+                            ->label('Dibuat')
+                            ->dateTime('d F Y H:i'),
+
+                        TextEntry::make('updated_at')
+                            ->label('Terakhir Diupdate')
+                            ->since(),
+
+                        TextEntry::make('mentors_count')
+                            ->label('Jumlah Pelatih')
+                            ->state(
+                                fn ($record): int => collect($record->mentors)->count()
+                            )
+                            ->badge()
+                            ->color('primary'),
+                    ]),
+
+                // ======================================================
+                // DESCRIPTION
+                // ======================================================
+
+                Section::make('Deskripsi')
+                    ->description('Informasi lengkap mengenai ekstrakurikuler.')
+                    ->icon('heroicon-m-book-open')
+                    ->collapsible()
+                    ->persistCollapsed()
+                    ->columnSpan([
+                        'default' => 12,
+                        'xl' => 8,
+                    ])
+                    ->schema([
+                        TextEntry::make('description')
+                            ->hiddenLabel()
+                            ->html()
+                            ->prose()
+                            ->placeholder('Belum ada deskripsi.')
+                            ->extraAttributes([
+                                'class' => '
+                                    max-w-none
+                                    prose-neutral
+                                    dark:prose-invert
+                                    prose-headings:font-bold
+                                    prose-p:text-gray-600
+                                    dark:prose-p:text-gray-300
+                                    prose-a:text-primary-600
+                                    dark:prose-a:text-primary-400
+                                    prose-img:rounded-2xl
+                                    prose-img:shadow-sm
+                                    prose-pre:rounded-2xl
+                                ',
                             ]),
                     ]),
             ]);
