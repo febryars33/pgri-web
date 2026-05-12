@@ -140,7 +140,7 @@ export default function Show({ post }: Props) {
     return (
         <Layout>
             <Head>
-                <title>{post.data.title}</title>
+                <title>{post.data.title as string}</title>
                 <meta name="description" content={post.data.excerpt} />
             </Head>
 
@@ -183,7 +183,7 @@ export default function Show({ post }: Props) {
                         fontWeight="extrabold"
                         letterSpacing="tight"
                     >
-                        {post.data.title}
+                        {post.data.title as string}
                     </Heading>
 
                     {/* Author Meta */}
