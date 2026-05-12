@@ -28,6 +28,15 @@
     <meta name="msapplication-config" content="/browserconfig.xml">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#ffffff">
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:title" content="SMAS PGRI 1 Bandung — Membangun Generasi Unggul & Berkarakter" />
+    <meta property="og:site_name" content="SMAS PGRI 1 Bandung" />
+    <meta property="og:url" content="{{ request()->fullUrl() }}" />
+    <meta property="og:description"
+        content="SMAS PGRI 1 Bandung berkomitmen membangun generasi yang religius, inovatif, terampil, berprestasi, dan berkarakter Pancasila melalui pendidikan berkualitas dan lingkungan belajar yang inspiratif." />
+    <meta property="og:image" content="{{ asset('img/og.png') }}" />
+    <meta property="og:image:alt" content="SMAS PGRI 1 Bandung" />
 
     @fonts
 
