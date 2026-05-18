@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\SlugRoute;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -19,6 +20,7 @@ use Spatie\Sluggable\SlugOptions;
     'description',
     'thumbnail',
     'slug',
+    'is_active'
 ])]
 class Course extends Model
 {
@@ -65,5 +67,10 @@ class Course extends Model
         return $this->belongsToMany(Teacher::class)
             ->using(CourseTeacher::class)
             ->withTimestamps();
+    }
+
+    public function scopeActive(Builder $query)
+    {
+        return $query->where('is_active', true);
     }
 }
