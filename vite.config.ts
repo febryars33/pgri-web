@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
 import { bunny } from 'laravel-vite-plugin/fonts';
 import { defineConfig } from 'vite';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
     plugins: [
@@ -12,11 +13,12 @@ export default defineConfig({
             refresh: true,
             fonts: [
                 bunny('Poppins', {
-                    weights: [300, 400, 500, 600, 700, 800, 900],
+                    weights: [400, 500, 600, 700],
                 }),
+
                 bunny('Geist', {
-                    weights: [300, 400, 500, 600, 700, 800, 900],
-                })
+                    weights: [400, 500, 600, 700],
+                }),
             ],
         }),
         inertia(),
@@ -28,5 +30,15 @@ export default defineConfig({
         wayfinder({
             formVariants: true,
         }),
+        visualizer({
+            open: false,
+        }),
     ],
+    build: {
+        rolldownOptions: {
+            output: {
+                codeSplitting: true
+            }
+        }
+    }
 });
