@@ -158,8 +158,8 @@ export default function Contact() {
                     templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
                     gap={{ base: 6, md: 12 }}
                 >
-                    {features.map((feature) => (
-                        <GridItem>
+                    {features.map((feature, index) => (
+                        <GridItem key={index}>
                             <Box
                                 height="100%"
                                 bg={feature.bg}
