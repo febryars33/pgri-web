@@ -18,7 +18,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->inertiaExceptionHandle();
+        if (app()->isProduction()) {
+            $this->inertiaExceptionHandle();
+        }
     }
 
     /**
