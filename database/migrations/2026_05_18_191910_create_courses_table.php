@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->longText('description')->nullable();
             $table->string('thumbnail')->nullable();
-            $table->string('phone', 20)->nullable();
             $table->boolean('is_active')->default(false);
             $table->softDeletes();
             $table->timestamps();
