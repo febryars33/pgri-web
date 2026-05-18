@@ -35,7 +35,9 @@ class PostCategoryResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Postingan Berita';
+    protected static string|UnitEnum|null $navigationGroup = 'Data Master';
+
+    protected static ?string $navigationLabel = 'Kategori Postingan';
 
     public static function form(Schema $schema): Schema
     {

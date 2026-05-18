@@ -25,9 +25,9 @@ class ExtracurricularCategoryResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Ekstrakurikuler';
+    protected static string|UnitEnum|null $navigationGroup = 'Data Master';
 
-    protected static ?string $navigationLabel = 'Kategori';
+    protected static ?string $navigationLabel = 'Kategori Ekstrakurikuler';
 
     public static function form(Schema $schema): Schema
     {

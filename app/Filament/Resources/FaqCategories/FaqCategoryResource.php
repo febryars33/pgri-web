@@ -26,7 +26,9 @@ class FaqCategoryResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static string|UnitEnum|null $navigationGroup = 'FAQs';
+    protected static string|UnitEnum|null $navigationGroup = 'Data Master';
+
+    protected static ?string $navigationLabel = 'Kategori FAQs';
 
     public static function form(Schema $schema): Schema
     {
