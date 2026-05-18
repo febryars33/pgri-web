@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Posts\Schemas;
 
 use App\Enums\PostStatus;
+use App\Models\Post;
 use App\Models\PostAttachment;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
@@ -214,6 +215,14 @@ class PostInfolist
                                     $minutes = max(1, ceil($words / 200));
 
                                     return "{$minutes} menit";
+                                })
+                                ->badge()
+                                ->color('gray'),
+
+                            TextEntry::make('views_count')
+                                ->label('Dibaca')
+                                ->state(function(Post $record) {
+                                    return views($record)->count();
                                 })
                                 ->badge()
                                 ->color('gray'),

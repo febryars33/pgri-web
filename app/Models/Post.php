@@ -6,6 +6,8 @@ use App\Enums\PostStatus;
 use App\Observers\PostObserver;
 use App\Traits\SlugRoute;
 use Carbon\Carbon;
+use CyrildeWit\EloquentViewable\Contracts\Viewable;
+use CyrildeWit\EloquentViewable\InteractsWithViews;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -39,10 +41,10 @@ use Spatie\Tags\HasTags;
 ])]
 #[Appends(['excerpt', 'formatted_created_at'])]
 #[ObservedBy(PostObserver::class)]
-class Post extends Model implements HasMedia
+class Post extends Model implements HasMedia, Viewable
 {
     /** @use HasFactory<PostFactory> */
-    use HasFactory, HasSlug, HasTags, InteractsWithMedia, SlugRoute, SoftDeletes, Searchable;
+    use HasFactory, HasSlug, HasTags, InteractsWithMedia, SlugRoute, SoftDeletes, Searchable, InteractsWithViews;
 
     protected $with = ['post_category'];
 

@@ -44,6 +44,11 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        views($post)
+            // ->cooldown(20)
+            ->unique()
+            ->record();
+
         $post->load(['tags', 'post_attachments', 'post_category']);
 
         return inertia('posts/show', [
