@@ -11,74 +11,32 @@ import {
     Separator,
     Grid,
     Icon,
+    Center,
 } from '@chakra-ui/react';
 import { Head, Link } from '@inertiajs/react';
 import type { FileMimeType } from '@zag-js/file-utils';
 import {
     LuCalendar,
     LuDownload,
-    LuFile,
-    LuFileCode,
+    LuEye,
     LuFileDown,
-    LuFileSpreadsheet,
-    LuFileText,
     LuTag,
 } from 'react-icons/lu';
 import HtmlRenderer from '@/components/ui/html-renderer';
 import { toaster } from '@/components/ui/toaster';
-import Layout from '@/layouts/post';
+import Layout from '@/layouts/posts/read';
 import posts from '@/routes/posts';
 import type { Post } from '@/types/models/post';
+import { getFileData } from '@/utils/file';
 
 interface Props {
     post: {
         data: Post;
     };
+    views_count: number;
 }
 
-export default function Show({ post }: Props) {
-    const getFileData = (ext: string) => {
-        switch (ext) {
-            case 'pdf':
-                return {
-                    baseColor: 'red',
-                    color: 'red.500',
-                    icon: LuFileText,
-                    label: 'PDF',
-                };
-            case 'xlsx':
-            case 'csv':
-                return {
-                    baseColor: 'green',
-                    color: 'green.500',
-                    icon: LuFileSpreadsheet,
-                    label: 'Excel',
-                };
-            case 'docx':
-            case 'doc':
-                return {
-                    baseColor: 'blue',
-                    color: 'blue.500',
-                    icon: LuFileText,
-                    label: 'Word',
-                };
-            case 'txt':
-                return {
-                    baseColor: 'gray',
-                    color: 'gray.500',
-                    icon: LuFile,
-                    label: 'Text',
-                };
-            default:
-                return {
-                    baseColor: 'teal',
-                    color: 'teal.500',
-                    icon: LuFileCode,
-                    label: 'File',
-                };
-        }
-    };
-
+export default function Show({ post, views_count }: Props) {
     /**
      * Helper untuk mengunduh file secara asinkron
      */
@@ -146,15 +104,24 @@ export default function Show({ post }: Props) {
 
             {/* Main Content (9 Columns) */}
             <GridItem colSpan={{ base: 1, lg: 9 }} as="article">
-                <VStack align="stretch" gap={6}>
-                    {/* Category & Date Meta */}
-                    <HStack gap={3}>
+                <VStack
+                    align="stretch"
+                    gap={{
+                        base: 8,
+                        md: 10,
+                    }}
+                >
+                    {/* Category, Date & Views Meta */}
+                    <HStack wrap="wrap" gap={3} align="center">
+                        {/* Category */}
                         <Badge
                             colorPalette="teal"
-                            variant="subtle"
-                            px={3}
-                            py={1}
-                            borderRadius="full"
+                            px={4}
+                            py={1.5}
+                            rounded="full"
+                            fontWeight="semibold"
+                            fontSize="xs"
+                            letterSpacing="0.02em"
                             asChild
                         >
                             <Link
@@ -165,38 +132,99 @@ export default function Show({ post }: Props) {
                                 {post.data.category?.name}
                             </Link>
                         </Badge>
-                        <HStack color="gray.500" fontSize="sm">
-                            <LuCalendar />
-                            <Text>{post.data.dates.published_at_human}</Text>
+
+                        {/* Date */}
+                        <HStack
+                            gap={1.5}
+                            align="center"
+                            color={{
+                                base: 'gray.500',
+                                _dark: 'gray.400',
+                            }}
+                            fontSize="sm"
+                        >
+                            <LuCalendar size={15} />
+
+                            <Text lineHeight="1">
+                                {post.data.dates.published_at_human}
+                            </Text>
                         </HStack>
-                        {/* <HStack color="gray.500" fontSize="sm">
-                            <LuView />
-                            <Text>1.2k Views</Text>
-                        </HStack> */}
+
+                        {/* Dot Separator */}
+                        <Box
+                            w="1"
+                            h="1"
+                            rounded="full"
+                            bg={{
+                                base: 'gray.300',
+                                _dark: 'gray.600',
+                            }}
+                        />
+
+                        {/* Views */}
+                        <HStack
+                            gap={1.5}
+                            align="center"
+                            color={{
+                                base: 'gray.500',
+                                _dark: 'gray.400',
+                            }}
+                            fontSize="sm"
+                        >
+                            <LuEye size={15} />
+
+                            <Text lineHeight="1">{views_count} views</Text>
+                        </HStack>
                     </HStack>
 
                     {/* Main Title */}
                     <Heading
                         as="h1"
-                        size="2xl"
-                        lineHeight="shorter"
-                        fontWeight="extrabold"
-                        letterSpacing="tight"
+                        fontSize={{
+                            base: '3xl',
+                            md: '5xl',
+                        }}
+                        lineHeight={{
+                            base: '1.15',
+                            md: '1.05',
+                        }}
+                        fontWeight="black"
+                        letterSpacing="-0.05em"
+                        color={{
+                            base: 'gray.900',
+                            _dark: 'white',
+                        }}
+                        maxW="4xl"
                     >
                         {post.data.title as string}
                     </Heading>
 
                     {/* Author Meta */}
-                    <HStack gap={4} py={2}>
-                        <Avatar.Root>
+                    <HStack gap={4} align="center">
+                        <Avatar.Root size="lg">
                             <Avatar.Fallback name="Admin Sekolah" />
                             <Avatar.Image src="https://placehold.co/100?font=Poppins&text=AS" />
                         </Avatar.Root>
-                        <VStack align="start" gap={0}>
-                            <Text fontWeight="bold" fontSize="sm">
-                                Oleh: Admin Sekolah
+
+                        <VStack align="start" gap={0.5}>
+                            <Text
+                                fontWeight="semibold"
+                                fontSize="sm"
+                                color={{
+                                    base: 'gray.900',
+                                    _dark: 'white',
+                                }}
+                            >
+                                Admin Sekolah
                             </Text>
-                            <Text fontSize="xs" color="gray.500">
+
+                            <Text
+                                fontSize="sm"
+                                color={{
+                                    base: 'gray.500',
+                                    _dark: 'gray.400',
+                                }}
+                            >
                                 Tim Publikasi Digital
                             </Text>
                         </VStack>
@@ -205,103 +233,133 @@ export default function Show({ post }: Props) {
                     {/* Featured Image */}
                     {post?.data?.media?.cover?.original && (
                         <Box
-                            borderRadius="2xl"
                             overflow="hidden"
-                            shadow="xl"
-                            role="group"
+                            rounded={{
+                                base: '2xl',
+                                md: '3xl',
+                            }}
+                            bg={{
+                                base: 'gray.100',
+                                _dark: 'gray.900',
+                            }}
+                            shadow="sm"
                         >
                             <Image
                                 src={post.data.media.cover.original}
-                                alt="Featured Image"
+                                alt={post.data.title as string}
                                 w="full"
-                                h={{ base: '300px', md: '500px' }}
+                                h={{
+                                    base: '240px',
+                                    md: '520px',
+                                }}
                                 objectFit="cover"
-                                transition="all 0.5s ease-in-out"
+                                transition="transform .6s cubic-bezier(.16,1,.3,1)"
                                 _hover={{
-                                    transform: 'scale(1.05)',
-                                    filter: 'brightness(0.9)',
+                                    transform: 'scale(1.03)',
                                 }}
                             />
                         </Box>
                     )}
 
-                    <HtmlRenderer
-                        content={post.data.body?.toString() ?? null}
-                        className="group"
-                    />
+                    <Box
+                        mt={2}
+                        color={{
+                            base: 'gray.700',
+                            _dark: 'gray.300',
+                        }}
+                        fontSize={{
+                            base: 'md',
+                            md: 'lg',
+                        }}
+                        lineHeight="1.9"
+                    >
+                        <HtmlRenderer
+                            content={post.data.body?.toString() ?? null}
+                            className="group"
+                        />
+                    </Box>
 
                     {/* Attachment Section */}
                     {post.data.media.attachments &&
                         post.data.media.attachments.length > 0 && (
-                            <Box mt={16} p={1} borderRadius="3xl" bg="bg.muted">
-                                {/* Header tetap sama */}
-                                <HStack p={6} pb={4}>
-                                    <HStack gap={3}>
-                                        <Box
-                                            p={2}
-                                            bg="teal.500/10"
-                                            borderRadius="lg"
-                                            color="teal.500"
+                            <Box
+                                mt={{
+                                    base: 12,
+                                    md: 16,
+                                }}
+                            >
+                                {/* Section Header */}
+                                <HStack
+                                    justify="space-between"
+                                    align="center"
+                                    mb={5}
+                                    gap={4}
+                                    wrap="wrap"
+                                >
+                                    <HStack gap={4}>
+                                        <Center
+                                            w={12}
+                                            h={12}
+                                            rounded="2xl"
+                                            bg={{
+                                                base: 'teal.50',
+                                                _dark: 'teal.950',
+                                            }}
+                                            color={{
+                                                base: 'teal.600',
+                                                _dark: 'teal.300',
+                                            }}
                                         >
                                             <LuFileDown size={22} />
-                                        </Box>
-                                        <VStack align="start" gap={0}>
+                                        </Center>
+
+                                        <VStack align="start" gap={0.5}>
                                             <Heading
-                                                size="md"
-                                                fontWeight="bold"
+                                                size="lg"
+                                                lineHeight="1.2"
+                                                letterSpacing="-0.03em"
+                                                color={{
+                                                    base: 'gray.900',
+                                                    _dark: 'white',
+                                                }}
                                             >
-                                                Unduh Berkas
+                                                Lampiran Berkas
                                             </Heading>
+
                                             <Text
-                                                fontSize="xs"
-                                                color="fg.muted"
+                                                fontSize="sm"
+                                                color={{
+                                                    base: 'gray.500',
+                                                    _dark: 'gray.400',
+                                                }}
                                             >
-                                                Tersedia{' '}
                                                 {
                                                     post.data.media.attachments
                                                         ?.length
                                                 }{' '}
-                                                file pendukung
+                                                file pendukung tersedia untuk
+                                                diunduh
                                             </Text>
                                         </VStack>
                                     </HStack>
                                 </HStack>
 
-                                {/* PERBAIKAN GRID: Responsif & Padding */}
+                                {/* Attachments Grid */}
                                 <Grid
                                     templateColumns={{
                                         base: '1fr',
-                                        md: 'repeat(2, 1fr)',
-                                    }} // 1 kolom di mobile, 2 di desktop
-                                    gap={4} // Gap diperkecil sedikit agar tidak terlalu renggang
-                                    px={6} // Padding horizontal disamakan dengan header
-                                    pb={6} // Padding bawah box
+                                        lg: 'repeat(2, minmax(0, 1fr))',
+                                    }}
+                                    gap={4}
                                 >
-                                    {/* <GridItem colSpan={2}>
-                                        <HStack>
-                                            <Alert.Root status="error">
-                                                <Alert.Indicator />
-                                                <Alert.Content>
-                                                    <Alert.Title>
-                                                        Invalid Fields
-                                                    </Alert.Title>
-                                                    <Alert.Description>
-                                                        Your form has some
-                                                        errors. Please fix them
-                                                        and try again.
-                                                    </Alert.Description>
-                                                </Alert.Content>
-                                            </Alert.Root>
-                                        </HStack>
-                                    </GridItem> */}
                                     {post.data.media.attachments
                                         .filter(
                                             (attachment) => !!attachment.file,
                                         )
                                         .map((file, index) => {
                                             const fileData = file.file!;
+
                                             const {
-                                                color,
                                                 icon: FileTypeIcon,
                                                 baseColor,
                                             } = getFileData(
@@ -311,24 +369,31 @@ export default function Show({ post }: Props) {
                                             return (
                                                 <GridItem key={index}>
                                                     <HStack
-                                                        className="group"
+                                                        role="group"
+                                                        align="center"
+                                                        justify="space-between"
+                                                        gap={4}
                                                         cursor="pointer"
-                                                        p={4}
-                                                        borderRadius="2xl"
-                                                        bg={`${color}/10`}
-                                                        _dark={{
-                                                            bg: `${color}/20`,
+                                                        p={{
+                                                            base: 4,
+                                                            md: 5,
                                                         }}
-                                                        transition="all 0.3s cubic-bezier(.4,0,.2,1)"
+                                                        rounded="3xl"
+                                                        bg={{
+                                                            base: 'gray.100',
+                                                            _dark: 'gray.900',
+                                                        }}
+                                                        // shadow="xs"
+                                                        transition="all .25s cubic-bezier(.16,1,.3,1)"
                                                         _hover={{
                                                             transform:
-                                                                'translateY(-4px)',
-                                                            bg: `${color}/20`,
-                                                            _dark: {
-                                                                bg: `${color}/30`,
+                                                                'translateY(-3px)',
+                                                            // shadow: 'md',
+                                                            bg: {
+                                                                base: `${baseColor}.50`,
+                                                                _dark: `${baseColor}.950`,
                                                             },
                                                         }}
-                                                        justify="space-between"
                                                         onClick={() =>
                                                             handleFileDownload(
                                                                 fileData.url,
@@ -337,62 +402,87 @@ export default function Show({ post }: Props) {
                                                             )
                                                         }
                                                     >
+                                                        {/* Left */}
                                                         <HStack
                                                             gap={4}
-                                                            overflow="hidden"
+                                                            minW={0}
+                                                            flex={1}
+                                                            align="center"
                                                         >
-                                                            <Box
-                                                                p={3}
-                                                                borderRadius="xl"
-                                                                bg={`${color}/10`}
-                                                                color={color}
-                                                                transition="transform 0.3s"
+                                                            {/* File Icon */}
+                                                            <Center
+                                                                flexShrink={0}
+                                                                w={{
+                                                                    base: 12,
+                                                                    md: 14,
+                                                                }}
+                                                                h={{
+                                                                    base: 12,
+                                                                    md: 14,
+                                                                }}
+                                                                rounded="2xl"
+                                                                bg={`${baseColor}.100`}
+                                                                color={`${baseColor}.600`}
+                                                                transition="all .25s ease"
+                                                                _dark={{
+                                                                    bg: `${baseColor}.900`,
+                                                                    color: `${baseColor}.300`,
+                                                                }}
                                                                 _groupHover={{
                                                                     transform:
-                                                                        'scale(1.1)',
+                                                                        'scale(1.05)',
                                                                 }}
                                                             >
                                                                 <FileTypeIcon
                                                                     size={24}
                                                                 />
-                                                            </Box>
+                                                            </Center>
 
+                                                            {/* Content */}
                                                             <VStack
                                                                 align="start"
-                                                                gap={0}
-                                                                overflow="hidden"
+                                                                gap={1}
+                                                                minW={0}
+                                                                flex={1}
                                                             >
                                                                 <Text
-                                                                    fontWeight="semibold"
                                                                     fontSize="sm"
-                                                                    color="fg.default"
-                                                                    _groupHover={{
-                                                                        color:
-                                                                            baseColor +
-                                                                            '.600',
-                                                                        _dark: {
-                                                                            color:
-                                                                                baseColor +
-                                                                                '.400',
-                                                                        },
+                                                                    fontWeight="semibold"
+                                                                    lineHeight="1.4"
+                                                                    color={{
+                                                                        base: 'gray.800',
+                                                                        _dark: 'white',
                                                                     }}
-                                                                    transition="color 0.2s"
                                                                     truncate
-                                                                    maxW="280px"
+                                                                    maxW="100%"
                                                                 >
                                                                     {file.name}
                                                                 </Text>
+
                                                                 <HStack
-                                                                    fontSize="xs"
-                                                                    color="fg.subtle"
                                                                     gap={2}
+                                                                    wrap="wrap"
+                                                                    fontSize="xs"
+                                                                    color={{
+                                                                        base: 'gray.500',
+                                                                        _dark: 'gray.400',
+                                                                    }}
                                                                 >
-                                                                    <Text>
-                                                                        {fileData.extension.toUpperCase()}
-                                                                    </Text>
-                                                                    <Text>
-                                                                        •
-                                                                    </Text>
+                                                                    <Badge
+                                                                        size="sm"
+                                                                        rounded="full"
+                                                                        colorPalette={
+                                                                            baseColor
+                                                                        }
+                                                                        variant="subtle"
+                                                                        textTransform="uppercase"
+                                                                        fontWeight="medium"
+                                                                    >
+                                                                        {
+                                                                            fileData.extension
+                                                                        }
+                                                                    </Badge>
+
                                                                     <Text>
                                                                         {
                                                                             fileData.size
@@ -402,21 +492,31 @@ export default function Show({ post }: Props) {
                                                             </VStack>
                                                         </HStack>
 
-                                                        <Icon
-                                                            as={LuDownload}
-                                                            color="fg.muted"
-                                                            boxSize={6}
+                                                        {/* Right */}
+                                                        <Center
+                                                            flexShrink={0}
+                                                            w={10}
+                                                            h={10}
+                                                            rounded="full"
+                                                            color={{
+                                                                base: 'gray.500',
+                                                                _dark: 'gray.400',
+                                                            }}
+                                                            transition="all .2s ease"
                                                             _groupHover={{
-                                                                color:
-                                                                    baseColor +
-                                                                    '.600',
+                                                                color: `${baseColor}.600`,
+                                                                transform:
+                                                                    'translateY(1px)',
                                                                 _dark: {
-                                                                    color:
-                                                                        baseColor +
-                                                                        '.400',
+                                                                    color: `${baseColor}.300`,
                                                                 },
                                                             }}
-                                                        />
+                                                        >
+                                                            <Icon
+                                                                as={LuDownload}
+                                                                boxSize={5}
+                                                            />
+                                                        </Center>
                                                     </HStack>
                                                 </GridItem>
                                             );
@@ -458,9 +558,6 @@ export default function Show({ post }: Props) {
                                     {tag.name.id}
                                 </Link>
                             </Badge>
-                            // <Link href={posts.tags(tag.id)} key={tag.id}>
-
-                            // </Link>
                         ))}
                     </HStack>
                 </VStack>

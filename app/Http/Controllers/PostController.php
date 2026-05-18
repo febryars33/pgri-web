@@ -27,6 +27,12 @@ class PostController extends Controller
                 )
             ),
 
+            'latest_posts'   =>  PostResource::collection(
+                Post::latest('created_at')
+                    ->limit(5)
+                    ->get()
+            ),
+
             'tags' => $this->getTags(),
             'post_categories' => $this->getPostCategories(),
 
@@ -59,6 +65,7 @@ class PostController extends Controller
                 'title' => $post->title,
                 'description' => $post->description,
             ],
+            'views_count' => views($post)->count(),
         ]);
     }
 

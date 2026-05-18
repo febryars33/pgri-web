@@ -1,4 +1,5 @@
 import {
+    Alert,
     Badge,
     Box,
     Container,
@@ -6,6 +7,7 @@ import {
     GridItem,
     Heading,
     HStack,
+    Image,
     Separator,
     Text,
     VStack,
@@ -17,50 +19,141 @@ import { Navbar } from '@/components/navbar';
 import SPMB from '@/components/post/spmb';
 import SearchInput from '@/components/search-input';
 import posts from '@/routes/posts';
+import type { Post } from '@/types/models/post';
 import type { PostCategory } from '@/types/models/post-category';
 import type { Tag } from '@/types/models/tag';
 
 const SidebarSection = ({
     title,
     children,
-    icon: Icon, // Kita tambahkan prop icon opsional
+    icon: Icon,
 }: {
-    title: React.ReactNode; // Ubah dari string ke React.ReactNode
+    title: React.ReactNode;
     children: React.ReactNode;
-    icon?: React.ElementType; // Tipe data untuk komponen icon
+    icon?: React.ElementType;
 }) => (
-    <VStack align="stretch" gap={4} mb={8}>
-        <HStack gap={2} align="center">
-            {/* Render icon jika ada */}
+    <VStack align="stretch" gap={5} mb={10}>
+        <HStack gap={2.5}>
             {Icon && (
                 <Icon
-                    size={18}
-                    style={{ color: 'var(--chakra-colors-teal-500)' }}
+                    size={16}
+                    style={{
+                        color: 'var(--chakra-colors-teal-500)',
+                        opacity: 0.9,
+                    }}
                 />
             )}
 
             <Heading
                 size="sm"
-                fontWeight="bold"
-                letterSpacing="wider"
-                textTransform="uppercase"
+                fontWeight="600"
+                letterSpacing="-0.02em"
+                color={{
+                    base: 'gray.900',
+                    _dark: 'white',
+                }}
             >
                 {title}
             </Heading>
         </HStack>
 
-        <Separator borderBottomWidth="2px" borderColor="teal.500" w="40px" />
-        <Box>{children}</Box>
+        {children}
     </VStack>
 );
 
+const LatestPost = ({ post }: { post: Post }) => (
+    <Box asChild className="group">
+        <Link href={posts.show(post.slug)}>
+            <HStack
+                align="start"
+                gap={4}
+                py={2}
+                transition="all 0.2s ease"
+                _hover={{
+                    transform: 'translateX(2px)',
+                }}
+            >
+                {/* Thumbnail */}
+                <Box
+                    boxSize="56px"
+                    rounded="xl"
+                    overflow="hidden"
+                    flexShrink={0}
+                    bg={{
+                        base: 'gray.100',
+                        _dark: 'gray.800',
+                    }}
+                >
+                    <Image
+                        src={
+                            post.media.cover.preview ??
+                            'https://placehold.co/400?text=No+Image'
+                        }
+                        alt={post.title as string}
+                        boxSize="full"
+                        objectFit="cover"
+                        transition="transform 0.4s ease"
+                        _groupHover={{
+                            transform: 'scale(1.04)',
+                        }}
+                    />
+                </Box>
+
+                {/* Content */}
+                <VStack align="start" gap={1} flex={1} minW={0}>
+                    <Text
+                        fontSize="10px"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                        textTransform="uppercase"
+                        color={{
+                            base: 'teal.600',
+                            _dark: 'teal.300',
+                        }}
+                    >
+                        {post.category.name}
+                    </Text>
+
+                    <Text
+                        fontSize="sm"
+                        fontWeight="600"
+                        lineHeight="1.45"
+                        lineClamp={2}
+                        color={{
+                            base: 'gray.900',
+                            _dark: 'white',
+                        }}
+                    >
+                        {post.title as string}
+                    </Text>
+
+                    <Text
+                        fontSize="xs"
+                        color={{
+                            base: 'gray.500',
+                            _dark: 'gray.400',
+                        }}
+                    >
+                        {post.dates.published_at_human}
+                    </Text>
+                </VStack>
+            </HStack>
+        </Link>
+    </Box>
+);
+
 export default function Layout({ children }: { children: React.ReactNode }) {
-    const { tags, post_categories } = usePage<{
+    const { tags, post_categories, latest_posts } = usePage<{
         tags: Tag[];
         post_categories: PostCategory[];
+        latest_posts: {
+            data: Post[];
+        };
     }>().props;
 
     const { url } = usePage();
+
+    console.log(latest_posts);
 
     return (
         <Box minH="100vh" display="flex" flexDirection="column">
@@ -75,7 +168,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 flex="1"
                 pt="16" // Sesuaikan dengan tinggi navbar kamu (misal 64px = 16)
             >
-                <Box py={100} minH="100vh">
+                <Box
+                    py={{
+                        base: 10,
+                        md: 16,
+                    }}
+                    minH="100vh"
+                >
                     {/* {children} */}
                     <Container maxW="7xl">
                         <Grid
@@ -83,7 +182,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 base: '1fr',
                                 lg: 'repeat(12, 1fr)',
                             }}
-                            gap={8}
+                            gap={{
+                                base: 10,
+                                lg: 14,
+                            }}
                         >
                             {children}
 
@@ -123,38 +225,44 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                                         category.slug,
                                                     )}
                                                 >
-                                                    <HStack // Gunakan HStack daripada Text untuk pembungkus agar valid secara HTML
+                                                    <HStack
                                                         justifyContent="space-between"
-                                                        py={2}
-                                                        px={3}
-                                                        borderRadius="md"
+                                                        py={2.5}
+                                                        transition="all 0.2s ease"
+                                                        color={{
+                                                            base: 'gray.700',
+                                                            _dark: 'gray.300',
+                                                        }}
                                                         _hover={{
-                                                            bg: 'teal.50',
-                                                            color: 'teal.600',
-                                                            _dark: {
-                                                                bg: 'whiteAlpha.100',
+                                                            color: {
+                                                                base: 'teal.600',
+                                                                _dark: 'teal.300',
                                                             },
+                                                            transform:
+                                                                'translateX(2px)',
                                                         }}
                                                     >
-                                                        <HStack>
+                                                        <HStack gap={2}>
                                                             <Text fontSize="sm">
                                                                 {category.name}
                                                             </Text>
-                                                            <Badge
-                                                                colorPalette={
-                                                                    category.slug ===
-                                                                    'uncategorized'
-                                                                        ? 'yellow'
-                                                                        : 'teal'
-                                                                }
+
+                                                            <Text
+                                                                fontSize="xs"
+                                                                color={{
+                                                                    base: 'gray.500',
+                                                                    _dark: 'gray.500',
+                                                                }}
                                                             >
                                                                 {
                                                                     category.posts_count
                                                                 }
-                                                            </Badge>
+                                                            </Text>
                                                         </HStack>
+
                                                         <LuChevronRight
                                                             size={14}
+                                                            opacity={0.5}
                                                         />
                                                     </HStack>
                                                 </Link>
@@ -215,7 +323,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                                         }
                                                         px={3}
                                                         py={1}
-                                                        borderRadius="md"
+                                                        borderRadius="full"
                                                         _hover={{
                                                             // Jika aktif, buat sedikit lebih terang/gelap saat hover
                                                             // Jika tidak aktif, gunakan hover standar
@@ -227,6 +335,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                                                     ? 'teal.600'
                                                                     : 'teal.900',
                                                             },
+                                                            // transform:
+                                                            //     'translateY(-1px)',
                                                         }}
                                                         // Pastikan key ada di elemen terluar (jika di dalam map)
                                                         key={tag.id}
@@ -248,6 +358,32 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                                 );
                                             })}
                                         </HStack>
+                                    </SidebarSection>
+
+                                    {/* Latest Posts */}
+                                    <SidebarSection title="Berita Terbaru">
+                                        {latest_posts.data.length > 0 ? (
+                                            <VStack align="stretch">
+                                                {latest_posts.data.map(
+                                                    (post, index) => (
+                                                        <LatestPost
+                                                            post={post}
+                                                            key={index}
+                                                        />
+                                                    ),
+                                                )}
+                                            </VStack>
+                                        ) : (
+                                            <Alert.Root
+                                                status="warning"
+                                                colorPalette="gray"
+                                            >
+                                                <Alert.Title>
+                                                    Tidak ada berita terbaru
+                                                    yang tersedia.
+                                                </Alert.Title>
+                                            </Alert.Root>
+                                        )}
                                     </SidebarSection>
 
                                     <SPMB />

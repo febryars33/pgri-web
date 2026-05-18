@@ -1,134 +1,75 @@
+'use client';
+
 import {
     Box,
-    Button,
     Container,
     Grid,
     GridItem,
     Heading,
+    HStack,
     Icon,
     Text,
+    VStack,
 } from '@chakra-ui/react';
 import { Head, Link } from '@inertiajs/react';
 import {
+    LuArrowRight,
     LuBookOpenCheck,
     LuClipboardPen,
     LuLifeBuoy,
     LuSparkles,
 } from 'react-icons/lu';
+
 import Layout from '@/layouts/default';
 
 export default function Contact() {
     const features = [
         {
-            title: {
-                text: 'Pendaftaran Siswa Baru',
-                color: 'blue.600',
-                _dark: {
-                    color: 'blue.400',
-                },
-            },
-            description: {
-                text: 'Tanya seputar syarat masuk, biaya sekolah, atau jadwal gelombang pendaftaran.',
-                color: 'blue.900',
-                _dark: {
-                    color: 'blue.100',
-                },
-            },
-            icon: {
-                name: LuClipboardPen,
-                color: 'blue.600',
-            },
-            button: {
-                palette: 'blue',
-                text: 'Hubungi Tim SPMB',
-            },
-            bg: 'blue.50',
-            _dark: {
-                bg: 'blue.950',
+            title: 'Pendaftaran Siswa Baru',
+            description:
+                'Tanya seputar syarat masuk, biaya sekolah, atau jadwal gelombang pendaftaran.',
+            icon: LuClipboardPen,
+            action: 'Hubungi Tim SPMB',
+            color: 'blue',
+            surface: {
+                base: 'blue.50',
+                dark: 'blue.950',
             },
         },
         {
-            title: {
-                text: 'Bantuan IT',
-                color: 'red.600',
-                _dark: {
-                    color: 'red.400',
-                },
-            },
-            description: {
-                text: 'Masalah login akun belajar, kesulitan akses rapot digital, atau website sekolah.',
-                color: 'red.900',
-                _dark: {
-                    color: 'red.100',
-                },
-            },
-            icon: {
-                name: LuLifeBuoy,
-                color: 'red.600',
-            },
-            button: {
-                palette: 'red',
-                text: 'Hubungi Tim IT',
-            },
-            bg: 'red.50',
-            _dark: {
-                bg: 'red.950',
+            title: 'Bantuan IT',
+            description:
+                'Masalah login akun belajar, kesulitan akses rapot digital, atau website sekolah.',
+            icon: LuLifeBuoy,
+            action: 'Hubungi Tim IT',
+            color: 'red',
+            surface: {
+                base: 'red.50',
+                dark: 'red.950',
             },
         },
         {
-            title: {
-                text: 'Kesiswaan',
-                color: 'yellow.600',
-                _dark: {
-                    color: 'yellow.400',
-                },
-            },
-            description: {
-                text: 'Informasi mengenai OSIS, kegiatan ekstrakurikuler, atau tata tertib sekolah.',
-                color: 'yellow.900',
-                _dark: {
-                    color: 'yellow.100',
-                },
-            },
-            icon: {
-                name: LuSparkles,
-                color: 'yellow.600',
-            },
-            button: {
-                palette: 'yellow',
-                text: 'Hubungi Kesiswaan',
-            },
-            bg: 'yellow.50',
-            _dark: {
-                bg: 'yellow.950',
+            title: 'Kesiswaan',
+            description:
+                'Informasi mengenai OSIS, kegiatan ekstrakurikuler, atau tata tertib sekolah.',
+            icon: LuSparkles,
+            action: 'Hubungi Kesiswaan',
+            color: 'yellow',
+            surface: {
+                base: 'yellow.50',
+                dark: 'yellow.950',
             },
         },
         {
-            title: {
-                text: 'Layanan Akademik',
-                color: 'green.600',
-                _dark: {
-                    color: 'green.400',
-                },
-            },
-            description: {
-                text: 'Informasi jadwal pelajaran, kalender akademik, atau pengajuan legalisir ijazah.',
-                color: 'green.900',
-                _dark: {
-                    color: 'green.100',
-                },
-            },
-            icon: {
-                name: LuBookOpenCheck,
-                color: 'green.600',
-            },
-            button: {
-                palette: 'green',
-                text: 'Hubungi Layanan Akademik',
-            },
-            bg: 'green.50',
-            _dark: {
-                bg: 'green.950',
+            title: 'Layanan Akademik',
+            description:
+                'Informasi jadwal pelajaran, kalender akademik, atau pengajuan legalisir ijazah.',
+            icon: LuBookOpenCheck,
+            action: 'Hubungi Akademik',
+            color: 'green',
+            surface: {
+                base: 'green.50',
+                dark: 'green.950',
             },
         },
     ];
@@ -137,103 +78,204 @@ export default function Contact() {
         <Layout>
             <Head>
                 <title>Hubungi Kami</title>
+
                 <meta
                     name="description"
-                    content="Ada yang mau ditanyain soal SMAS PGRI 1 Bandung? Tenang, admin siap bantu jawab semua kegalauanmu."
+                    content="Hubungi SMAS PGRI 1 Bandung untuk informasi akademik, pendaftaran siswa baru, bantuan IT, dan layanan sekolah lainnya."
                 />
             </Head>
 
-            <Container maxW="7xl" py="14">
-                <Heading size="5xl" fontWeight="extrabold">
-                    Sapa Kami, Yuk!
-                </Heading>
-                <Text color="fg.muted">
-                    Ada yang mau ditanyain soal SMAS PGRI 1 Bandung? Tenang,
-                    admin siap bantu jawab semua kegalauanmu.
-                </Text>
+            {/* Hero */}
+            <Container
+                maxW="7xl"
+                py={{
+                    base: 12,
+                    md: 20,
+                }}
+            >
+                <VStack align="start" gap={5} maxW="3xl">
+                    <Text
+                        fontSize="sm"
+                        fontWeight="700"
+                        color={{
+                            base: 'teal.600',
+                            _dark: 'teal.300',
+                        }}
+                        letterSpacing="0.08em"
+                    >
+                        KONTAK SEKOLAH
+                    </Text>
+
+                    <Heading
+                        fontSize={{
+                            base: '4xl',
+                            md: '6xl',
+                        }}
+                        lineHeight="0.95"
+                        letterSpacing="-0.07em"
+                        fontWeight="700"
+                    >
+                        Ada yang bisa kami bantu?
+                    </Heading>
+
+                    <Text
+                        fontSize={{
+                            base: 'sm',
+                            md: 'md',
+                        }}
+                        lineHeight="1.9"
+                        color={{
+                            base: 'gray.600',
+                            _dark: 'gray.400',
+                        }}
+                    >
+                        Hubungi bagian terkait untuk mendapatkan bantuan
+                        mengenai pendaftaran, layanan akademik, bantuan teknis,
+                        maupun kegiatan sekolah lainnya.
+                    </Text>
+                </VStack>
             </Container>
 
-            <Container maxW="7xl" px={{ base: 4, md: 8 }}>
+            {/* Content */}
+            <Container
+                maxW="7xl"
+                pb={{
+                    base: 14,
+                    md: 24,
+                }}
+            >
                 <Grid
-                    templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
-                    gap={{ base: 6, md: 12 }}
+                    templateColumns={{
+                        base: '1fr',
+                        md: 'repeat(2, 1fr)',
+                    }}
+                    gap={{
+                        base: 6,
+                        md: 8,
+                    }}
                 >
                     {features.map((feature, index) => (
                         <GridItem key={index}>
                             <Box
-                                height="100%"
-                                bg={feature.bg}
-                                _dark={feature._dark}
-                                borderRadius="2xl"
+                                h="full"
+                                rounded="3xl"
+                                bg={{
+                                    base: feature.surface.base,
+                                    _dark: feature.surface.dark,
+                                }}
+                                p={{
+                                    base: 6,
+                                    md: 8,
+                                }}
                                 position="relative"
                                 overflow="hidden"
-                                // Efek Hover
+                                transition="all 0.25s cubic-bezier(0.16,1,0.3,1)"
+                                boxShadow={{
+                                    base: '0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04)',
+                                    _dark: '0 2px 12px rgba(0,0,0,0.24)',
+                                }}
                                 _hover={{
-                                    transform: 'translateY(-4px)', // Lebih modern daripada scale
-                                    boxShadow: 'sm',
-                                    bg: feature.button.palette + '.100',
-                                    _dark: {
-                                        bg: feature.button.palette + '.900',
+                                    transform: 'translateY(-4px)',
+                                    boxShadow: {
+                                        base: '0 10px 32px rgba(0,0,0,0.08)',
+                                        _dark: '0 12px 36px rgba(0,0,0,0.34)',
                                     },
                                 }}
-                                // Konfigurasi Transisi Chakra v3
-                                transitionProperty="all"
-                                transitionDuration="moderate" // Menggunakan token: 'fast' (100ms), 'moderate' (200ms), atau 'slow' (400ms)
-                                transitionTimingFunction="ease-in-out"
                             >
-                                {/* Background Icon Style */}
+                                {/* Decorative Blob */}
                                 <Box
                                     position="absolute"
-                                    top="-10px"
-                                    right="-10px"
-                                    color={feature.icon.color}
-                                    opacity="0.12"
-                                    transform="rotate(15deg)"
-                                    pointerEvents="none"
-                                >
-                                    <Icon
-                                        as={feature.icon.name}
-                                        boxSize={125}
-                                    />
-                                    {/* <LuClipboardPen size={125} /> */}
-                                </Box>
+                                    top="-30px"
+                                    right="-30px"
+                                    w="120px"
+                                    h="120px"
+                                    rounded="full"
+                                    bg={{
+                                        base: `${feature.color}.200`,
+                                        _dark: `${feature.color}.800`,
+                                    }}
+                                    opacity={0.18}
+                                />
 
-                                <Container py={{ base: 6, md: 8 }}>
-                                    <Heading
-                                        size={{ base: '2xl', md: '4xl' }}
-                                        mb="4"
-                                        color={feature.title.color}
-                                        _dark={feature.title._dark}
+                                <VStack
+                                    align="start"
+                                    gap={6}
+                                    h="full"
+                                    position="relative"
+                                    zIndex={1}
+                                >
+                                    {/* Icon */}
+                                    <Box
+                                        rounded="2xl"
+                                        p={3}
+                                        bg={{
+                                            base: 'whiteAlpha.700',
+                                            _dark: 'whiteAlpha.100',
+                                        }}
+                                        color={{
+                                            base: `${feature.color}.600`,
+                                            _dark: `${feature.color}.300`,
+                                        }}
+                                        backdropFilter="blur(10px)"
                                     >
-                                        {feature.title.text}
-                                    </Heading>
-                                    <Text
-                                        mb="6"
-                                        color={feature.description.color}
-                                        _dark={feature.description._dark}
-                                    >
-                                        {feature.description.text}
-                                    </Text>
-                                    <Link href="/">
-                                        <Button
-                                            fontFamily="Poppins, sans-serif"
-                                            variant="solid"
-                                            colorPalette={
-                                                feature.button.palette
-                                            }
-                                            width={{ base: 'full', sm: 'auto' }}
+                                        <Icon as={feature.icon} boxSize={6} />
+                                    </Box>
+
+                                    {/* Content */}
+                                    <VStack align="start" gap={3} flex={1}>
+                                        <Heading
+                                            fontSize={{
+                                                base: '2xl',
+                                                md: '3xl',
+                                            }}
+                                            lineHeight="1.05"
+                                            letterSpacing="-0.04em"
+                                            fontWeight="700"
+                                            color={{
+                                                base: 'gray.900',
+                                                _dark: 'white',
+                                            }}
                                         >
-                                            {feature.button.text}
-                                        </Button>
+                                            {feature.title}
+                                        </Heading>
+
+                                        <Text
+                                            fontSize="sm"
+                                            lineHeight="1.9"
+                                            color={{
+                                                base: 'gray.700',
+                                                _dark: 'gray.300',
+                                            }}
+                                        >
+                                            {feature.description}
+                                        </Text>
+                                    </VStack>
+
+                                    {/* Action */}
+                                    <Link href="/">
+                                        <HStack
+                                            gap={2}
+                                            fontSize="sm"
+                                            fontWeight="700"
+                                            color={{
+                                                base: `${feature.color}.700`,
+                                                _dark: `${feature.color}.300`,
+                                            }}
+                                            transition="all 0.2s ease"
+                                            _hover={{
+                                                gap: 3,
+                                            }}
+                                        >
+                                            <Text>{feature.action}</Text>
+
+                                            <LuArrowRight size={16} />
+                                        </HStack>
                                     </Link>
-                                </Container>
+                                </VStack>
                             </Box>
                         </GridItem>
                     ))}
                 </Grid>
-                {/* <Link href={about()}>
-                    About
-                </Link> */}
             </Container>
         </Layout>
     );

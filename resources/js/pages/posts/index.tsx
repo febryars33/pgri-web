@@ -1,236 +1,375 @@
-// post/index.tsx
 'use client';
 
 import {
+    Badge,
     Box,
+    Center,
+    EmptyState,
     GridItem,
     Heading,
-    Text,
-    Image,
-    Stack,
     HStack,
-    Badge,
-    SimpleGrid,
-    Flex,
     Icon,
-    EmptyState,
-    VStack,
+    Image,
+    SimpleGrid,
     Spinner,
-    Center,
+    Stack,
+    Text,
+    VStack,
 } from '@chakra-ui/react';
+
 import { Head, InfiniteScroll, Link } from '@inertiajs/react';
-import { LuCalendar, LuImageOff, LuSearch, LuUser } from 'react-icons/lu';
-import Layout from '@/layouts/post';
+
+import { LuArrowRight, LuCalendar, LuImageOff, LuSearch } from 'react-icons/lu';
+
+import Layout from '@/layouts/posts/main';
 import posts from '@/routes/posts';
+
 import type { Post } from '@/types/models/post';
+
 interface Props {
     posts: {
         data: Post[];
     };
+
     seo: {
         title: string;
         description: string;
     };
 }
 
-// --- Components ---
-const PostCard = ({ post }: { post: Post }) => (
-    <Link href={posts.show(post.slug)}>
-        <Box
-            className="group"
-            bg={{ base: 'gray.100', _dark: 'gray.900' }}
-            borderRadius="3xl"
-            overflow="hidden"
-            transition="all 0.3s"
-            h="100%"
-            _hover={{
-                transform: 'translateY(-4px)',
-                bg: 'teal.50',
-                _dark: { bg: 'teal.950' },
-            }}
-        >
-            <Box position="relative" h="220px" overflow="hidden" bg="gray.100">
-                {post.media?.cover?.preview ? (
-                    <Image
-                        src={post.media.cover.preview}
-                        alt={post.title as string}
-                        w="full"
-                        h="full"
-                        objectFit="cover"
-                        transition="transform 0.5s"
-                        _groupHover={{ transform: 'scale(1.05)' }}
-                        loading="lazy"
-                    />
-                ) : (
-                    /* UI Pengganti jika gambar null */
-                    <Flex
-                        w="full"
-                        h="full"
-                        direction="column"
-                        align="center"
-                        justify="center"
-                        gap={3}
-                        px={6}
-                        // Best practice 3.x: Gunakan semantic tokens untuk dark mode otomatis
-                        bg="bg.muted"
-                        position="relative"
-                        overflow="hidden"
-                    >
-                        {/* Dekorasi subtle menggunakan mask atau gradient blur */}
-                        <Box
-                            position="absolute"
-                            inset="0"
-                            bgGradient="to-br"
-                            gradientFrom="colorPalette.muted"
-                            gradientTo="transparent"
-                            opacity="0.2"
+/* -------------------------------------------------------------------------- */
+/*                                   Helpers                                  */
+/* -------------------------------------------------------------------------- */
+
+const getCategoryPalette = (slug?: string) => {
+    return slug === 'uncategorized' ? 'gray' : 'teal';
+};
+
+/* -------------------------------------------------------------------------- */
+/*                                 Post Card                                  */
+/* -------------------------------------------------------------------------- */
+
+function PostCard({ post }: { post: Post }) {
+    return (
+        <Link href={posts.show(post.slug)}>
+            <Box
+                role="group"
+                h="full"
+                overflow="hidden"
+                rounded="3xl"
+                bg={{
+                    base: 'white',
+                    _dark: 'gray.900',
+                }}
+                transition="all 0.25s cubic-bezier(0.16, 1, 0.3, 1)"
+                boxShadow={{
+                    base: '0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04)',
+                    _dark: '0 2px 12px rgba(0,0,0,0.24)',
+                }}
+                _hover={{
+                    transform: 'translateY(-4px)',
+                    boxShadow: {
+                        base: '0 10px 32px rgba(0,0,0,0.08)',
+                        _dark: '0 12px 36px rgba(0,0,0,0.34)',
+                    },
+                }}
+            >
+                {/* Cover */}
+                <Box
+                    position="relative"
+                    aspectRatio={16 / 10}
+                    overflow="hidden"
+                    bg={{
+                        base: 'gray.100',
+                        _dark: 'gray.800',
+                    }}
+                >
+                    {post.media?.cover?.preview ? (
+                        <Image
+                            src={post.media.cover.preview}
+                            alt={post.title as string}
+                            w="full"
+                            h="full"
+                            objectFit="cover"
+                            loading="lazy"
+                            transition="transform 0.7s cubic-bezier(0.16,1,0.3,1)"
+                            _groupHover={{
+                                transform: 'scale(1.03)',
+                            }}
                         />
+                    ) : (
+                        <Center h="full" flexDirection="column" gap={3}>
+                            <Icon
+                                as={LuImageOff}
+                                boxSize={8}
+                                color={{
+                                    base: 'gray.400',
+                                    _dark: 'gray.500',
+                                }}
+                            />
 
-                        {/* Icon Placeholder menggunakan Square/Circle component */}
-                        <Icon color="fg.error">
-                            <LuImageOff size={128} />
-                        </Icon>
-                    </Flex>
-                )}
+                            <Text
+                                fontSize="sm"
+                                color={{
+                                    base: 'gray.500',
+                                    _dark: 'gray.400',
+                                }}
+                            >
+                                Tidak ada gambar
+                            </Text>
+                        </Center>
+                    )}
 
-                <Badge
-                    position="absolute"
-                    top={4}
-                    left={4}
-                    variant="subtle"
-                    colorPalette={
-                        post.category.slug === 'uncategorized'
-                            ? 'red'
-                            : 'yellow'
-                    }
-                >
-                    {post.category.slug === 'uncategorized'
-                        ? 'Uncategorized'
-                        : post.category.name}
-                </Badge>
-            </Box>
+                    {/* Category */}
+                    <Badge
+                        position="absolute"
+                        top={4}
+                        left={4}
+                        px={3}
+                        py={1}
+                        rounded="full"
+                        fontSize="10px"
+                        fontWeight="600"
+                        colorPalette={getCategoryPalette(post.category.slug)}
+                    >
+                        {post.category.slug === 'uncategorized'
+                            ? 'Uncategorized'
+                            : post.category.name}
+                    </Badge>
+                </Box>
 
-            <Stack p={6} gap={3}>
-                <HStack
+                {/* Content */}
+                <Stack
                     gap={4}
-                    color="gray.600"
-                    _dark={{ color: 'gray.300' }}
-                    fontSize="xs"
+                    px={{
+                        base: 5,
+                        md: 6,
+                    }}
+                    py={{
+                        base: 5,
+                        md: 6,
+                    }}
                 >
-                    <HStack gap={1}>
-                        <LuCalendar /> {post.dates.published_at_human}
+                    {/* Meta */}
+                    <HStack justify="space-between">
+                        <HStack
+                            gap={1.5}
+                            color={{
+                                base: 'gray.500',
+                                _dark: 'gray.400',
+                            }}
+                            fontSize="xs"
+                        >
+                            <LuCalendar size={14} />
+
+                            <Text>{post.dates.published_at_human}</Text>
+                        </HStack>
+
+                        <Text
+                            fontSize="xs"
+                            fontWeight="600"
+                            color={{
+                                base: 'teal.600',
+                                _dark: 'teal.300',
+                            }}
+                        >
+                            Artikel
+                        </Text>
                     </HStack>
-                    <HStack gap={1}>
-                        <LuUser /> Administrator
-                    </HStack>
-                </HStack>
-                <Heading size="md" lineClamp={2} fontWeight="bold">
-                    <Text
-                        _groupHover={{ color: 'teal.600' }}
-                        dangerouslySetInnerHTML={{ __html: post.title }}
-                        css={{
-                            '& .search-highlight': {
-                                display: 'inline-block',
 
-                                px: '1.5',
-                                py: '0.5',
-
-                                borderRadius: 'md',
-
-                                bg: 'teal.subtle',
-                                color: 'teal.fg',
-
-                                fontWeight: 'semibold',
-                                transition: 'all 0.2s ease',
-
-                                // Better readability
-                                // lineHeight: '1.4',
-
-                                // Smooth dark mode rendering
-                                // boxDecorationBreak: 'clone',
-                                // WebkitBoxDecorationBreak: 'clone',
-                            },
-
-                            '.group:hover & .search-highlight': {
-                                bg: 'teal.solid',
-                                color: 'white',
-                                borderColor: 'teal.solid',
-                            },
+                    {/* Title */}
+                    <Heading
+                        as="h2"
+                        fontSize={{
+                            base: 'xl',
+                            md: '2xl',
                         }}
-                    />
-                </Heading>
-                <Text
-                    fontSize="sm"
-                    color="gray.600"
-                    _dark={{ color: 'gray.400' }}
-                    lineClamp={2}
-                >
-                    {post.excerpt}
-                </Text>
-            </Stack>
-        </Box>
-    </Link>
-);
+                        lineClamp={2}
+                        lineHeight="1.12"
+                        letterSpacing="-0.045em"
+                        fontWeight="700"
+                        color={{
+                            base: 'gray.900',
+                            _dark: 'white',
+                        }}
+                    >
+                        <Text
+                            as="span"
+                            dangerouslySetInnerHTML={{
+                                __html: post.title,
+                            }}
+                            css={{
+                                '& .search-highlight': {
+                                    background: 'rgba(20,184,166,0.12)',
+                                    color: '#0f766e',
+                                    borderRadius: '6px',
+                                    padding: '1px 4px',
+                                    fontWeight: 700,
+                                },
+                            }}
+                        />
+                    </Heading>
+
+                    {/* Excerpt */}
+                    <Text
+                        fontSize="sm"
+                        lineHeight="1.9"
+                        lineClamp={3}
+                        color={{
+                            base: 'gray.600',
+                            _dark: 'gray.400',
+                        }}
+                    >
+                        {post.excerpt}
+                    </Text>
+
+                    {/* Footer */}
+                    <HStack justify="space-between" align="center" pt={1}>
+                        <Text
+                            fontSize="sm"
+                            fontWeight="600"
+                            color={{
+                                base: 'gray.800',
+                                _dark: 'gray.200',
+                            }}
+                        >
+                            Baca artikel
+                        </Text>
+
+                        <Center
+                            w="9"
+                            h="9"
+                            rounded="full"
+                            bg={{
+                                base: 'gray.100',
+                                _dark: 'whiteAlpha.100',
+                            }}
+                            transition="all 0.2s ease"
+                            _groupHover={{
+                                transform: 'translateX(2px)',
+                                bg: {
+                                    base: 'teal.50',
+                                    _dark: 'teal.900',
+                                },
+                            }}
+                        >
+                            <LuArrowRight size={16} />
+                        </Center>
+                    </HStack>
+                </Stack>
+            </Box>
+        </Link>
+    );
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                    Page                                    */
+/* -------------------------------------------------------------------------- */
 
 export default function Index({ posts, seo }: Props) {
     return (
         <Layout>
             <Head>
                 <title>{seo.title}</title>
+
                 <meta name="description" content={seo.description} />
             </Head>
+
             {/* Header */}
-            <GridItem
-                colSpan={{
-                    lg: 12,
-                }}
-            >
-                <Heading size="2xl" color="teal.600" fontWeight="extrabold">
-                    Berita Sekolah
-                </Heading>
-                <Text color="gray.500">
-                    Informasi terbaru seputar kegiatan dan prestasi SMAS PGRI 1
-                    Bandung
-                </Text>
+            <GridItem colSpan={{ lg: 12 }}>
+                <VStack
+                    align="start"
+                    gap={4}
+                    mb={{
+                        base: 10,
+                        md: 14,
+                    }}
+                >
+                    <Badge
+                        colorPalette="teal"
+                        variant="subtle"
+                        px={3}
+                        py={1}
+                        rounded="full"
+                        fontWeight="600"
+                    >
+                        Portal Informasi
+                    </Badge>
+
+                    <Heading
+                        fontSize={{
+                            base: '4xl',
+                            md: '6xl',
+                        }}
+                        lineHeight="0.95"
+                        letterSpacing="-0.07em"
+                        fontWeight="700"
+                        maxW="900px"
+                    >
+                        Berita dan informasi terbaru sekolah.
+                    </Heading>
+
+                    <Text
+                        maxW="2xl"
+                        fontSize={{
+                            base: 'sm',
+                            md: 'md',
+                        }}
+                        lineHeight="1.9"
+                        color={{
+                            base: 'gray.600',
+                            _dark: 'gray.400',
+                        }}
+                    >
+                        Kegiatan sekolah, prestasi siswa, pengumuman, dan
+                        berbagai informasi penting lainnya yang dikemas secara
+                        sederhana dan nyaman dibaca.
+                    </Text>
+                </VStack>
             </GridItem>
 
-            {/* Main Content (9 Columns) */}
+            {/* Content */}
             <GridItem colSpan={{ base: 1, lg: 9 }}>
                 {posts.data.length > 0 ? (
                     <InfiniteScroll
                         data="posts"
                         buffer={500}
                         loading={() => (
-                            <Center py="10" width="full">
-                                <Spinner
-                                    size="xl" // Ukuran lebih besar agar terlihat jelas
-                                    color="yellow.600" // Cara penulisan warna di v3
-                                    borderWidth="3px"
-                                />
+                            <Center py="10">
+                                <Spinner size="lg" color="teal.500" />
                             </Center>
                         )}
                     >
-                        <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+                        <SimpleGrid
+                            columns={{
+                                base: 1,
+                                md: 2,
+                            }}
+                            gap={{
+                                base: 5,
+                                md: 6,
+                            }}
+                        >
                             {posts.data.map((post) => (
                                 <PostCard key={post.id} post={post} />
                             ))}
                         </SimpleGrid>
                     </InfiniteScroll>
                 ) : (
-                    <EmptyState.Root size="lg">
+                    <EmptyState.Root py="24">
                         <EmptyState.Content>
                             <EmptyState.Indicator>
-                                <Icon as={LuSearch} boxSize={20} />
+                                <Icon as={LuSearch} boxSize="14" />
                             </EmptyState.Indicator>
+
                             <VStack textAlign="center">
                                 <EmptyState.Title>
-                                    Wah, Topiknya Belum Ketemu Nih!
+                                    Artikel belum tersedia
                                 </EmptyState.Title>
+
                                 <EmptyState.Description>
-                                    Kami sudah mencari ke seluruh sudut
-                                    perpustakaan digital, tapi artikelnya belum
-                                    ada. Coba gunakan istilah yang lebih umum,
-                                    ya.
+                                    Belum ada berita yang dapat ditampilkan saat
+                                    ini.
                                 </EmptyState.Description>
                             </VStack>
                         </EmptyState.Content>
