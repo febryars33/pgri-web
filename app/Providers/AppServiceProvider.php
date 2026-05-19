@@ -28,11 +28,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->configureDefaults();
+        $this->forceHttps();
 
-        if (app()->isProduction()) {
-            URL::forceScheme('https');
-        }
+        $this->configureDefaults();
     }
 
     /**
@@ -66,5 +64,12 @@ class AppServiceProvider extends ServiceProvider
                 ])->withSharedData();
             }
         });
+    }
+
+    protected function forceHttps()
+    {
+        if (app()->isProduction()) {
+            URL::forceScheme('https');
+        }
     }
 }
