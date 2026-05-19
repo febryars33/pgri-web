@@ -29,7 +29,7 @@ class PostController extends Controller
 
             'latest_posts'   =>  PostResource::collection(
                 Post::published()
-                    ->latest('published_at')
+                    ->latest('created_at')
                     ->limit(5)
                     ->get()
             ),
