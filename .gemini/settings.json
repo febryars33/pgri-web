@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "mysql-local": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@liangshanli/mcp-server-mysql"
+      ],
+      "env": {
+        "MYSQL_HOST": "$DB_HOST",
+        "MYSQL_PORT": "$DB_PORT",
+        "MYSQL_USER": "$DB_USERNAME",
+        "MYSQL_PASSWORD": "$DB_PASSWORD",
+        "MYSQL_DATABASE": "$DB_DATABASE",
+        "ALLOW_DDL": "true",
+        "ALLOW_DELETE": "true"
+      },
+      "trust": true
+    }
+  }
+}
