@@ -30,10 +30,12 @@ export default defineConfig({
         wayfinder({
             formVariants: true,
         }),
-        visualizer({
-            open: false,
-        }),
-    ],
+        process.env.NODE_ENV === 'production'
+            ? null // Disable in production
+            : visualizer({
+                open: false,
+            }),
+    ].filter(Boolean), // Filter out nulls from the plugins array
     build: {
         rolldownOptions: {
             output: {
